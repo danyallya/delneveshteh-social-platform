@@ -1,0 +1,269 @@
+import json
+
+from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponse, Http404
+from django.template.defaultfilters import striptags
+from django.utils.encoding import smart_text
+
+from account.forms import SignUpFormNoCaptcha, ProfileForm
+from account.models import Profile, Suggestion
+from comment.handler import CommentHandler
+from comment.models import Comment
+from favorites.models import Favorite
+from post.models import Post
+from utils.calverter import gregorian_to_jalali
+from utils.messages import MessageServices
+
+
+def logout(request):
+    from django.contrib.auth import logout
+
+    logout(request)
+    response = HttpResponse(json.dumps(get_auth_values(request)), 'application/json')
+    return response
+
+
+def login(request):
+    from django.contrib.auth import authenticate, login
+
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        # remember = request.POST.get('remember')
+        # if remember in [2, '2']:
+        #     request.session.set_expiry(None)
+
+        user = authenticate(username=username, password=password)
+        if user is None or not user.is_active:
+            message = u"نام کاربری یا گذرواژه نادرست است."
+            # print {'m': message, 'login': False}
+            return HttpResponse(json.dumps({'m': message, 'login': False}),
+                                'application/json')
+        else:
+            login(request, user)
+            # print get_auth_values(request)
+            return HttpResponse(json.dumps(get_auth_values(request)),
+                                'application/json')
+    else:
+        return initial_post(request)
+
+
+def signup(request):
+    if request.method == 'POST':
+        post = request.POST.copy()
+        form = SignUpFormNoCaptcha(post)
+        if form.is_valid():
+            form.save()
+            data = get_auth_values(request)
+            data.update({'success': True})
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            message = ""
+            for error in form.errors:
+                message += striptags(form.fields[error].label) + u": " + striptags(form.errors[error]) + u"\n"
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': message})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        profile = request.user
+        post = request.POST.copy()
+        form = ProfileForm(post, instance=profile)
+        if form.is_valid():
+            user = form.save()
+            data = get_auth_values(request)
+            data.update({'success': True, 'user': profile.get_android_fields()})
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            message = ""
+            for error in form.errors:
+                message += striptags(form.fields[error].label) + u": " + striptags(form.errors[error]) + u"\n"
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': message})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def movie_list(request):
+    p = request.GET.get('p')
+
+    posts_obj = Post.objects.filter(active=True).order_by('id')
+
+    if p == 'popular':
+        posts_obj = posts_obj
+    elif p == 'favs':
+        posts_obj = posts_obj
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+# def recommends(request):
+#     wares = WareModel.objects.filter(active=True, recommends__isnull=False).select_subclasses().distinct()
+#     return HttpResponse(WareModel.get_summery_json(handle_search(request, wares)), 'application/json')
+#
+#
+# def populars(request):
+#     wares = WareModel.objects.filter(active=True, populars__isnull=False).exclude(
+#         WareModel.get_default_queryset()).select_subclasses().distinct()
+#     return HttpResponse(WareModel.get_summery_json(handle_search(request, wares)), 'application/json')
+
+
+@login_required
+def set_fav(request, movie_id):
+    try:
+        movie = Post.objects.get(id=movie_id)
+    except Post.DoesNotExist:
+        raise Http404
+    if Favorite.objects.is_favorite(request.user, movie):
+        Favorite.objects.del_favorite(request.user, movie)
+        message = u" %s با موفقیت از علاقه مندی ها حذف شد" % movie.name
+        state = 'off'
+    else:
+        Favorite.objects.create_favorite(request.user, movie)
+        message = u" %s با موفقیت به علاقه مندی ها اضافه شد" % movie.name
+        state = 'on'
+    data = get_auth_values(request)
+    data.update({'m': message, 's': state})
+    return HttpResponse(json.dumps([data]), 'application/json')
+
+
+@login_required
+def my_fav(request):
+    fav_s = Favorite.objects.filter(
+        user=request.user, )
+    # ).distinct('object_id')
+    fav_dict = []
+    for fav in fav_s:
+        obj = Post.objects.get(id=fav.object_id)
+        fav_dict.append({'n': obj.name, "ty": obj._meta.verbose_name, 'co': obj.code,
+                         'd': gregorian_to_jalali(fav.created_time.date()), 'i': obj.id})
+    return HttpResponse(json.dumps(fav_dict), 'application/json')
+
+
+@login_required
+def my_comments(request):
+    comments = Comment.objects.filter(
+        user=request.user,
+    )
+    comments_dict = []
+    for comment in comments:
+        obj = Post.objects.get(id=comment.object_pk)
+        comments_dict.append({'t': comment.user_name, 'c': comment.text,
+                              's': comment.color,
+                              'n': obj.name, 'i': obj.id,
+                              "ty": obj._meta.verbose_name, 'co': obj.code,
+                              'd': gregorian_to_jalali(comment.created_on)})
+    return HttpResponse(json.dumps(comments_dict), 'application/json')
+
+
+@login_required
+def send_comment(request, movie_id):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        if text:
+            comment = Comment(
+                object_pk=smart_text(movie_id),
+                text=text,
+                user=request.user,
+            )
+            comment.save()
+            data = get_auth_values(request)
+            data.update({'success': True})
+            comments = Comment.objects.filter(
+                object_pk=smart_text(movie_id),
+            )
+            comments_arr = CommentHandler(comments).render_comments_json()
+            data.update({'c': comments_arr})
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': u"متن نظر الزامی است."})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def send_suggestion(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        title = request.POST.get('title')
+        body = request.POST.get('body')
+        user = None
+        if request.user.is_authenticated():
+            user = request.user
+        if name and email and title and body:
+            suggestion = Suggestion(
+                name=name,
+                email=email,
+                title=title,
+                body=body,
+                creator=user,
+            )
+            suggestion.save()
+            data = get_auth_values(request)
+            data.update({'success': True})
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': u"لطفا همه فیلدها را پر نمایید."})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def forget(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            if not Profile.objects.filter(email=email).exists():
+                data = get_auth_values(request)
+                data.update({'success': False, 'm': u"کاربری با این پست الکترونیک پیدا نشد."})
+                response = HttpResponse(json.dumps(data), 'application/json')
+                return append_csrf(request, response)
+            else:
+                MessageServices.send_forget_password(email)
+                data = get_auth_values(request)
+                data.update({'success': True})
+                return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': u"پست الکترونیک نامعتبر است."})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def initial_post(request, **kwargs):
+    data = get_auth_values(request)
+    data.update(kwargs)
+    response = HttpResponse(json.dumps(data), 'application/json')
+    return append_csrf(request, response)
+
+
+def get_auth_values(request):
+    # print request.bill.get_android_fields()
+    # print request.bill.payed
+    if request.user.is_authenticated():
+        return {'login': True, 'user': request.user.get_android_fields()}
+    return {'login': False}
+
+
+def append_csrf(request, response):
+    from django.middleware.csrf import get_token
+
+    csrf = get_token(request)
+    response.set_cookie(key='csrf', value=csrf)
+    return response

@@ -1,0 +1,112 @@
+import json
+
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.utils.encoding import smart_text
+
+from account.models import Profile
+from comment.models import Comment
+from favorites.models import Favorite
+from utils.calverter import gregorian_to_jalali
+from utils.models import BaseModel, Named
+
+
+class PostImage(models.Model):
+    image = models.ImageField(verbose_name=u"تصویر", upload_to="extra_images")
+    movie = models.ForeignKey('Post', verbose_name="اثر", null=True, on_delete=models.CASCADE,
+                              related_name='extra_images')
+
+    class Meta:
+        verbose_name = u"تصویر اثر"
+        verbose_name_plural = u"تصاویر اثر"
+
+    def __str__(self):
+        return self.image.url
+
+    @property
+    def image_url(self):
+        return settings.SITE_URL + self.image.url
+
+
+class PostLike(models.Model):
+    user = models.ForeignKey(Profile, verbose_name="کاربر")
+    post = models.ForeignKey('post.Post', verbose_name="پست", related_name='likes')
+    created_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "پسندیدن"
+        verbose_name_plural = "پسندیدن  ها"
+        unique_together = (('user', 'movie_id',),)
+
+    def __unicode__(self):
+        return u"%s likes %s" % (self.user, self.content_object)
+
+
+class PostRate(models.Model):
+    user = models.ForeignKey(Profile, verbose_name="کاربر")
+    rate = models.IntegerField(verbose_name="امتیاز")
+
+    class Meta:
+        verbose_name = "امتیاز کاربر"
+        verbose_name_plural = "امتیاز کاربران"
+
+
+class Post(BaseModel):
+    text = models.TextField()
+    active = models.BooleanField(verbose_name="نمایش", default=True)
+
+    rate = models.FloatField(verbose_name="امتیاز", default=0, null=True)
+    rate_count = models.IntegerField(verbose_name="تعداد امتیازها", default=0, null=True)
+
+    class Meta:
+        verbose_name = "فیلم"
+        verbose_name_plural = "فیلم ها"
+        get_latest_by = 'created_on'
+
+    def get_detail_json(self, user):
+        data = [{'d': self.id, 'n': self.name, 'p': self.price, 'i': self.get_image_url(), 'c': self.code,
+                 'r': self.remaining, 'ty': self._meta.verbose_name, 'b': self.brief or '---',
+                 'de': self.description or '---', 't': str(self.created_on),
+                 'f': self.is_fav(user), 'im': self.get_extra_image_urls(), 'pa': reverse('movie_page', args=[self.id]),
+                 'm': self.mat or '---', 's': self.size or '---', 'col': self.color or '---'}]
+        return json.dumps(data)
+
+    def get_comments(self):
+        c_type = ContentType.objects.get_for_model(Post)
+        comments = Comment.objects.filter(
+            content_type=c_type,
+            object_pk=smart_text(self.id),
+        )
+        comments_dict = []
+        for comment in comments:
+            comments_dict.append(
+                {'t': comment.user_name, 'c': comment.comment, 'd': gregorian_to_jalali(comment.submit_date)})
+        return comments
+
+    def get_image_url(self):
+        return settings.SITE_URL + self.image.url
+
+    def get_extra_image_urls(self):
+        res = []
+        for image in self.extra_images.all():
+            res.append(image.image_url)
+        return res
+
+    def is_fav(self, user):
+        return Favorite.objects.is_favorite(user, self)
+
+    def get_absolute_url(self):
+        return reverse("ware_page", args=[self.id])
+
+    def get_summery_fields(self, user):
+        return {'d': self.id, 'n': self.name, 'i': self.get_image_url(), 'de': self.text,
+                "rc": self.rate_count, 'f': self.is_fav(user)}
+
+    @staticmethod
+    def get_summery_json(posts, user):
+        data = []
+        for post in posts:
+            data.append(post.get_summery_fields(user))
+        return json.dumps(data)

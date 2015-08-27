@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>
+        فانوس
+    </title>
+    <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
+    {#    <link rel="shortcut icon" href="/static/favicon.ico">#}
+
+    {% block CSS %}
+        {#        <link rel="stylesheet" type="text/css" href="/static/old_base.css"/>#}
+        {#        <link rel="stylesheet" type="text/css" href="/static/lib/jquery-ui/jquery-ui.min.css"/>#}
+    {% endblock %}
+
+    {% block JS %}
+        {#        <script type="text/javascript" src="/static/lib/jquery-1.10.2.min.js"></script>#}
+        <script>
+            var django = {jQuery: jQuery};
+        </script>
+        {#        <script type="text/javascript" src="/static/lib/jquery-ui/jquery-ui.min.js"></script>#}
+        {#        <script type="text/javascript" src="/static/base.js"></script>#}
+    {% endblock %}
+
+
+</head>
+
+<body class="main_container">
+
+{% include 'messages.html' %}
+
+<article id="content">
+    <style type="text/css">
+
+        #container {
+            background: #FFF;
+            border: 1px solid #CCC;
+            width: 28em;
+            min-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 40px;
+            -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+        }
+
+        #container h1 {
+            margin: 0;
+            background-color: #6AD6DE;
+            color: #FFF;
+        }
+
+        #container input {
+            background: white;
+            border-radius: 0;
+            padding: 5px;
+            margin: 0 auto;
+        }
+
+        #container form {
+            text-align: center;
+        }
+    </style>
+
+    <div id="container">
+
+        <h1>
+            ورود
+        </h1>
+
+        <form action="" method="post" id="login-form">
+            {% csrf_token %}
+
+            <label for="username">نام کاربری</label>
+            <br/>
+            <input type="text" name="username" id="username"/>
+            <br/>
+
+            <label for="password">گذرواژه</label>
+            <br/>
+            <input type="password" name="password" id="password"/>
+            <br/>
+
+
+            <p>
+                <input type="submit" name="submit" value="ورود"/>
+            </p>
+
+        </form>
+    </div>
+
+    <script type="text/javascript">
+    </script>
+
+</article>
+
+
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+
+.idea
+*.pyc
+*/local.py
+*/local_settings.py
+*.db
+/media/*
+
+/static_files/*
+
+db.sqlite3
+*/prk_set.py

@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% load i18n grp_tags %}
+
+{% block title %}{{ title }} | {% get_site_title %}{% endblock %}
+
+{% block branding %}
+    {# Use the div#grp-branding for branding elements, e.g. a logo #}
+    {# <div id="grp-branding"></div> #}
+{% endblock %}
+
+{% block extrahead %}
+    <script>
+        (function ($) {
+            $(document).ready(function () {
+                $(".add-related, .change-related").attr(
+                        "onclick",
+                        "event.preventDefault();grp.onclickRelatedWorkaround(this)"
+                )
+            });
+            grp.onclickRelatedWorkaround = function (el) {
+                if ($(el).attr("href") != null) {
+                    showAddAnotherPopup(el)
+                }
+            }
+        })(grp.jQuery);
+    </script>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

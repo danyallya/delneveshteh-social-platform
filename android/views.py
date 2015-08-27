@@ -93,7 +93,7 @@ def edit_profile(request):
         return initial_post(request)
 
 
-def movie_list(request):
+def post_list(request):
     p = request.GET.get('p')
 
     posts_obj = Post.objects.filter(active=True).order_by('id')

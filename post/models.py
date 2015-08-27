@@ -38,7 +38,7 @@ class PostLike(models.Model):
     class Meta:
         verbose_name = "پسندیدن"
         verbose_name_plural = "پسندیدن  ها"
-        unique_together = (('user', 'movie_id',),)
+        # unique_together = (('user', 'post_id',),)
 
     def __unicode__(self):
         return u"%s likes %s" % (self.user, self.content_object)

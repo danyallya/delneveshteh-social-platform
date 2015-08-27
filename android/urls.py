@@ -12,13 +12,7 @@ urlpatterns = patterns(
     url(r'^edit_profile/$', 'edit_profile', name='android_edit_profile'),
     url(r'^logout/$', 'logout', name='android_logout'),
     url(r'^set_fav/(?P<movie_id>\d+)/$', 'set_fav', name='android_set_fav'),
-    url(r'^posts/$', 'posts', name='android_posts'),
-
-    url(r'^movie/(?P<movie_id>\d+)/$', 'movie_page', name='android_movie_page'),
-    url(r'^brief/(?P<movie_id>\d+)/$', 'movie_brief', name='android_movie_brief'),
-    url(r'^desc/(?P<movie_id>\d+)/$', 'movie_desc', name='android_movie_desc'),
-    url(r'^comments/(?P<movie_id>\d+)/$', 'movie_comments', name='android_movie_comments'),
-    url(r'^evaluate/(?P<movie_id>\d+)/$', 'movie_evaluate', name='android_movie_evaluate'),
+    url(r'^posts/$', 'post_list', name='android_posts'),
 
     url(r'^my_comments/$', 'my_comments', name='android_my_comments'),
     url(r'^my_fav/$', 'my_fav', name='android_my_fav'),

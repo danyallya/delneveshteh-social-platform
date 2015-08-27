@@ -61,8 +61,8 @@ class Post(BaseModel):
     rate_count = models.IntegerField(verbose_name="تعداد امتیازها", default=0, null=True)
 
     class Meta:
-        verbose_name = "فیلم"
-        verbose_name_plural = "فیلم ها"
+        verbose_name = "پست"
+        verbose_name_plural = "پست ها"
         get_latest_by = 'created_on'
 
     def get_detail_json(self, user):

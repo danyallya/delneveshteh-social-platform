@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from django.contrib import admin
-from easy_select2.utils import select2_modelform
+# from easy_select2.utils import select2_modelform
 # from mce_filebrowser.admin import MCEFilebrowserAdmin
 
 from utils.calverter import gregorian_to_jalali
@@ -12,7 +12,7 @@ __author__ = 'M.Y'
 class HardModelAdmin(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         self.num = 0
-        self.form = select2_modelform(model, attrs={'width': '250px'})
+        # self.form = select2_modelform(model, attrs={'width': '250px'})
         super(HardModelAdmin, self).__init__(model, admin_site)
         # self.list_display = ['get_row_num'] + list(self.list_display)
         if 'created_on' in model._meta.get_all_field_names():

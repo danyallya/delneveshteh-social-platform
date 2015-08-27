@@ -66,7 +66,7 @@ class Post(BaseModel):
         get_latest_by = 'created_on'
 
     def get_detail_json(self, user):
-        data = [{'d': self.id, 'n': self.name, 'p': self.price, 'i': self.get_image_url(), 'c': self.code,
+        data = [{'d': self.id, 'n': self.name, 'p': self.price, 'c': self.code,
                  'r': self.remaining, 'ty': self._meta.verbose_name, 'b': self.brief or '---',
                  'de': self.description or '---', 't': str(self.created_on),
                  'f': self.is_fav(user), 'im': self.get_extra_image_urls(), 'pa': reverse('movie_page', args=[self.id]),
@@ -85,9 +85,6 @@ class Post(BaseModel):
                 {'t': comment.user_name, 'c': comment.comment, 'd': gregorian_to_jalali(comment.submit_date)})
         return comments
 
-    def get_image_url(self):
-        return settings.SITE_URL + self.image.url
-
     def get_extra_image_urls(self):
         res = []
         for image in self.extra_images.all():
@@ -101,7 +98,7 @@ class Post(BaseModel):
         return reverse("ware_page", args=[self.id])
 
     def get_summery_fields(self, user):
-        return {'d': self.id, 'n': self.name, 'i': self.get_image_url(), 'de': self.text,
+        return {'d': self.id, 'n': self.name, 'de': self.text,
                 "rc": self.rate_count, 'f': self.is_fav(user)}
 
     @staticmethod

@@ -16,12 +16,12 @@ class CommentAdmin(HardModelAdmin):
     def get_desc(self, obj):
         return str(obj)
 
-    get_desc.short_description = u"ãÊä"
+    get_desc.short_description = 'Ù…ØªÙ†'
 
     def get_reply(self, obj):
         return str(obj.reply)
 
-    get_reply.short_description = u"äÙÑ ÇÕá?"
+    get_reply.short_description = 'Ù†Ø¸Ø± Ø§ØµÙ„ÛŒ'
 
 
 class LikeCommentAdmin(HardModelAdmin):
@@ -33,12 +33,12 @@ class LikeCommentAdmin(HardModelAdmin):
     def get_desc(self, obj):
         return str(obj)
 
-    get_desc.short_description = u"ãÊä"
+    get_desc.short_description = 'Ù…ØªÙ†'
 
     def get_reply(self, obj):
         return str(obj.reply)
 
-    get_reply.short_description = u"äÙÑ ÇÕá?"
+    get_reply.short_description = 'Ù†Ø¸Ø± Ø§ØµÙ„ÛŒ'
 
 
 class ReportCommentAdmin(HardModelAdmin):
@@ -49,7 +49,7 @@ class ReportCommentAdmin(HardModelAdmin):
     def get_desc(self, obj):
         return str(obj)
 
-    get_desc.short_description = u"˜ÇãäÊ"
+    get_desc.short_description = 'Ú©Ø§Ù…Ù†Øª'
 
 
 admin.site.register(Comment, CommentAdmin)

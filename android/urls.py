@@ -14,6 +14,8 @@ urlpatterns = patterns(
     url(r'^set_fav/(?P<movie_id>\d+)/$', 'set_fav', name='android_set_fav'),
     url(r'^posts/$', 'post_list', name='android_posts'),
 
+    url(r'^post/(?P<post_id>\d+)/$', 'post_page', name='android_post_page'),
+
     url(r'^my_comments/$', 'my_comments', name='android_my_comments'),
     url(r'^my_fav/$', 'my_fav', name='android_my_fav'),
     url(r'^send_comment/(?P<movie_id>\d+)/$', 'send_comment', name='android_send_comment'),

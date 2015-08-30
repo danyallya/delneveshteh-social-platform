@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import striptags
 from django.utils.encoding import smart_text
 
@@ -104,6 +105,12 @@ def post_list(request):
         posts_obj = posts_obj
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def post_page(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    return HttpResponse(post.get_detail_json(request.user), 'application/json')
 
 
 # def recommends(request):

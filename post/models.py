@@ -7,7 +7,8 @@ from django.db import models
 from django.utils.encoding import smart_text
 
 from account.models import Profile
-from comment.models import Comment
+from comment.handler import CommentHandler
+from comment.models import Comment, LikeComment
 from favorites.models import Favorite
 from utils.calverter import gregorian_to_jalali
 from utils.models import BaseModel, Named
@@ -66,11 +67,22 @@ class Post(BaseModel):
         get_latest_by = 'created_on'
 
     def get_detail_json(self, user):
-        data = [{'d': self.id, 'n': self.name, 'p': self.price, 'c': self.code,
-                 'r': self.remaining, 'ty': self._meta.verbose_name, 'b': self.brief or '---',
-                 'de': self.description or '---', 't': str(self.created_on),
-                 'f': self.is_fav(user), 'im': self.get_extra_image_urls(), 'pa': reverse('movie_page', args=[self.id]),
-                 'm': self.mat or '---', 's': self.size or '---', 'col': self.color or '---'}]
+        data = self.get_summery_fields(user)
+
+        comments = Comment.objects.filter(
+            content_type=PostContentType,
+            object_pk=smart_text(self.id),
+            like_count__gt=0
+        ).order_by('-like_count')
+        comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
+
+        if user.is_anonymous():
+            lk = list()
+        else:
+            lk = list(LikeComment.objects.filter(user=user).values_list('comment_id', flat=True))
+
+        data.update({'cj': comments_json, 'cl': lk})
+
         return json.dumps(data)
 
     def get_comments(self):
@@ -107,3 +119,6 @@ class Post(BaseModel):
         for post in posts:
             data.append(post.get_summery_fields(user))
         return json.dumps(data)
+
+
+PostContentType = ContentType.objects.get_for_model(Post)

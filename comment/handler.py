@@ -6,9 +6,10 @@ from django.template.defaultfilters import linebreaksbr
 
 
 class CommentHandler:
-    def __init__(self, comments):
+    def __init__(self, comments, user_id=None):
         self.comments = list(comments)
         self.comments_children = {}
+        self.user_id = user_id
 
     # def render(self):
     #     self.__create_comment_tree()
@@ -96,7 +97,7 @@ class CommentHandler:
 
         res = self.render_comments_json_items(root_comments)
 
-        return json.dumps(res)
+        return res
 
     def render_comments_json_items(self, comments):
         if not comments:
@@ -106,7 +107,8 @@ class CommentHandler:
         for comment in comments:
             children_list = self.comments_children[str(comment.id)]
             item = {'i': comment.id, 'l': comment.like_count, 'u': str(comment.user), 't': linebreaksbr(comment.text),
-                    'd': gregorian_to_jalali(comment.created_on), 'c': self.render_comments_json_items(children_list)}
+                    'd': comment.date, 'c': self.render_comments_json_items(children_list),
+                    'm': comment.user_id == self.user_id}
 
             res.append(item)
 

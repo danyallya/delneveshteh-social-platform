@@ -5,7 +5,7 @@ from utils.admin import HardModelAdmin
 
 
 class CommentAdmin(HardModelAdmin):
-    list_display = ['user', 'like_count', 'get_desc', 'active', 'get_reply']
+    list_display = ['user', 'like_count', 'get_desc', 'active']
     list_filter = ('created_on', 'like_count', 'active')
     search_fields = ('text',)
 
@@ -18,11 +18,6 @@ class CommentAdmin(HardModelAdmin):
 
     get_desc.short_description = 'متن'
 
-    def get_reply(self, obj):
-        return str(obj.reply)
-
-    get_reply.short_description = 'نظر اصلی'
-
 
 class LikeCommentAdmin(HardModelAdmin):
     list_display = ['user', 'comment']
@@ -34,11 +29,6 @@ class LikeCommentAdmin(HardModelAdmin):
         return str(obj)
 
     get_desc.short_description = 'متن'
-
-    def get_reply(self, obj):
-        return str(obj.reply)
-
-    get_reply.short_description = 'نظر اصلی'
 
 
 class ReportCommentAdmin(HardModelAdmin):

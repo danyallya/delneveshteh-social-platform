@@ -1,7 +1,10 @@
+import datetime
+
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from account.models import Profile
+from utils.templatetags.date_template_tags import pdate_if_date
 
 
 class Comment(models.Model):
@@ -22,6 +25,23 @@ class Comment(models.Model):
         if not self.active:
             return u"<font color='#aa0707'>تاییدنشده</font>"
         return u"<font color='#17c50a'>تاییدشده</font>"
+
+    @property
+    def date(self):
+        now = datetime.datetime.utcnow()
+        sec = (now - self.created_on.replace(tzinfo=None)).total_seconds()
+        if sec < 60:
+            return "%s ثانیه قبل" % int(sec)
+        elif sec < 60 * 60:
+            return "%s دقیقه قبل" % int(sec / 60)
+        elif sec < 60 * 60 * 24:
+            return "%s ساعت قبل" % int(sec / (60 * 60))
+        elif sec < 60 * 60 * 24 * 7:
+            return "%s روز قبل" % int(sec / (60 * 60 * 24))
+        elif sec < 60 * 60 * 24 * 7 * 54:
+            return "%s هفته قبل" % int(sec / (60 * 60 * 24 * 7))
+        else:
+            return pdate_if_date(self.created_on)
 
     class Meta:
         verbose_name = "نظر"

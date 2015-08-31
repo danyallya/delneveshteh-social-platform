@@ -172,43 +172,42 @@ def my_comments(request):
     return HttpResponse(json.dumps(comments_dict), 'application/json')
 
 
-# @login_required
-def send_comment(request, movie_id, comment_id=None):
-    if request.method == 'POST':
-        text = request.POST.get('text')
-        comment = None
-        if comment_id:
-            comment = get_object_or_404(Comment, id=comment_id)
-        if text:
-            comment = Comment(
-                content_type=PostContentType,
-                object_pk=smart_text(movie_id),
-                text=text,
-                user=request.user,
-                user_name=request.user.username or "ناشناس",
-                reply_to=comment
-            )
+def send_comment(request, post_id, comment_id=None):
+    # if request.method == 'POST':
+    text = request.GET.get('text')
+    comment = None
+    if comment_id:
+        comment = get_object_or_404(Comment, id=comment_id)
+    if text:
+        comment = Comment(
+            content_type=PostContentType,
+            object_pk=smart_text(post_id),
+            text=text,
+            user=request.user if request.user.is_authenticated() else None,
+            user_name=request.user.username or "ناشناس",
+            reply_to=comment
+        )
 
-            comment.save()
-            data = get_auth_values(request)
-            data.update({'success': True})
+        comment.save()
+        data = get_auth_values(request)
+        data.update({'success': True})
 
-            comments = Comment.objects.filter(
-                content_type=PostContentType,
-                object_pk=smart_text(movie_id),
-            )
+        comments = Comment.objects.filter(
+            content_type=PostContentType,
+            object_pk=smart_text(post_id),
+        )
 
-            comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
-            data.update({'c': comments_arr})
+        comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
+        data.update({'c': comments_arr})
 
-            return HttpResponse(json.dumps(data), 'application/json')
-        else:
-            data = get_auth_values(request)
-            data.update({'success': False, 'm': u"متن نظر الزامی است."})
-            response = HttpResponse(json.dumps(data), 'application/json')
-            return append_csrf(request, response)
+        return HttpResponse(json.dumps(data), 'application/json')
     else:
-        return initial_post(request)
+        data = get_auth_values(request)
+        data.update({'success': False, 'm': u"متن نظر الزامی است."})
+        response = HttpResponse(json.dumps(data), 'application/json')
+        return append_csrf(request, response)
+    # else:
+    #     return initial_post(request)
 
 
 def send_suggestion(request):

@@ -174,7 +174,7 @@ def my_comments(request):
 
 def send_comment(request, post_id, comment_id=None):
     if request.method == 'POST':
-        text = request.GET.get('text')
+        text = request.POST.get('text')
         comment = None
         if comment_id:
             comment = get_object_or_404(Comment, id=comment_id)

@@ -72,7 +72,7 @@ class Post(BaseModel):
         comments = Comment.objects.filter(
             content_type=PostContentType,
             object_pk=smart_text(self.id)
-        ).order_by('-id')
+        )
         comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
 
         if user.is_anonymous():

@@ -20,6 +20,12 @@ class Comment(models.Model):
     like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
     active = models.BooleanField(verbose_name="نمایش نظر", default=True)
 
+    def __str__(self):
+        if len(self.text) > 31:
+            return self.text[:30] + " ..."
+        else:
+            return self.text
+
     @property
     def color(self):
         if not self.active:

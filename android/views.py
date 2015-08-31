@@ -11,7 +11,7 @@ from account.models import Profile, Suggestion
 from comment.handler import CommentHandler
 from comment.models import Comment
 from favorites.models import Favorite
-from post.models import Post
+from post.models import Post, PostContentType
 from utils.calverter import gregorian_to_jalali
 from utils.messages import MessageServices
 
@@ -172,24 +172,35 @@ def my_comments(request):
     return HttpResponse(json.dumps(comments_dict), 'application/json')
 
 
-@login_required
-def send_comment(request, movie_id):
+# @login_required
+def send_comment(request, movie_id, comment_id=None):
     if request.method == 'POST':
         text = request.POST.get('text')
+        comment = None
+        if comment_id:
+            comment = get_object_or_404(Comment, id=comment_id)
         if text:
             comment = Comment(
+                content_type=PostContentType,
                 object_pk=smart_text(movie_id),
                 text=text,
                 user=request.user,
+                user_name=request.user.username or "ناشناس",
+                reply_to=comment
             )
+
             comment.save()
             data = get_auth_values(request)
             data.update({'success': True})
+
             comments = Comment.objects.filter(
+                content_type=PostContentType,
                 object_pk=smart_text(movie_id),
             )
-            comments_arr = CommentHandler(comments).render_comments_json()
+
+            comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
             data.update({'c': comments_arr})
+
             return HttpResponse(json.dumps(data), 'application/json')
         else:
             data = get_auth_values(request)

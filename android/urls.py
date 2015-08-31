@@ -18,7 +18,7 @@ urlpatterns = patterns(
 
     url(r'^my_comments/$', 'my_comments', name='android_my_comments'),
     url(r'^my_fav/$', 'my_fav', name='android_my_fav'),
-    url(r'^send_comment/(?P<movie_id>\d+)/$', 'send_comment', name='android_send_comment'),
+    url(r'^send_comment/(?P<post_id>\d+)/$', 'send_comment', name='android_send_comment'),
     url(r'^send_suggestion/$', 'send_suggestion', name='android_send_suggestion'),
     url(r'^forget/$', 'forget', name='android_forget'),
 

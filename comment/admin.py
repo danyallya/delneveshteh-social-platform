@@ -6,7 +6,7 @@ from utils.admin import HardModelAdmin
 
 class CommentAdmin(HardModelAdmin):
     list_display = ['user', 'like_count', 'get_desc', 'active', 'get_reply']
-    list_filter = ('created_on', 'like_count', 'active', 'fav')
+    list_filter = ('created_on', 'like_count', 'active')
     search_fields = ('text',)
 
     fieldsets = (

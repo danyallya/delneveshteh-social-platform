@@ -22,10 +22,10 @@ class Profile(AbstractUser):
 
     @property
     def name(self):
-        return self.first_name
+        return self.username
 
     def get_android_fields(self):
-        return {'u': self.username, 'e': self.email, 'f': self.first_name}
+        return {'u': self.username, 'e': self.email}
         # @property
         # def profile_image(self):
         #     if self.image:

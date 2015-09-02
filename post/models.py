@@ -1,9 +1,11 @@
+import datetime
 import json
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
+
 from django.utils.encoding import smart_text
 
 from account.models import Profile
@@ -12,6 +14,7 @@ from comment.models import Comment, LikeComment
 from favorites.models import Favorite
 from utils.calverter import gregorian_to_jalali
 from utils.models import BaseModel, Named
+from utils.templatetags.date_template_tags import pdate_if_date
 
 
 class PostImage(models.Model):
@@ -34,24 +37,48 @@ class PostImage(models.Model):
 class PostLike(models.Model):
     user = models.ForeignKey(Profile, verbose_name="کاربر")
     post = models.ForeignKey('post.Post', verbose_name="پست", related_name='likes')
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
 
     class Meta:
         verbose_name = "پسندیدن"
         verbose_name_plural = "پسندیدن  ها"
         # unique_together = (('user', 'post_id',),)
 
-    def __unicode__(self):
-        return u"%s likes %s" % (self.user, self.content_object)
+    def __str__(self):
+        return u"%s likes %s" % (self.user, self.post)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super(PostLike, self).save(force_insert, force_update, using, update_fields)
+        self.post.update()
+
+    def delete(self, using=None):
+        post = self.post
+        super(PostLike, self).delete(using)
+        post.update()
 
 
 class PostRate(models.Model):
     user = models.ForeignKey(Profile, verbose_name="کاربر")
     rate = models.IntegerField(verbose_name="امتیاز")
+    created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
 
     class Meta:
         verbose_name = "امتیاز کاربر"
         verbose_name_plural = "امتیاز کاربران"
+
+
+class PostReport(models.Model):
+    user = models.ForeignKey(Profile, verbose_name="کاربر", null=True, blank=True)
+    post = models.ForeignKey('post.Post', verbose_name="پست")
+    created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "گزارش پست"
+        verbose_name_plural = "گزارش پست"
+
+    def __str__(self):
+        return str(self.post)
 
 
 class Post(BaseModel):
@@ -61,10 +88,16 @@ class Post(BaseModel):
     rate = models.FloatField(verbose_name="امتیاز", default=0, null=True)
     rate_count = models.IntegerField(verbose_name="تعداد امتیازها", default=0, null=True)
 
+    like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
+
     class Meta:
         verbose_name = "پست"
         verbose_name_plural = "پست ها"
         get_latest_by = 'created_on'
+
+    def update(self):
+        self.like_count = self.likes.count()
+        self.save()
 
     def get_detail_json(self, user):
         data = self.get_summery_fields(user)
@@ -103,13 +136,13 @@ class Post(BaseModel):
         return res
 
     def is_fav(self, user):
-        return Favorite.objects.is_favorite(user, self)
+        return PostLike.objects.filter(user=user, post_id=self.id).exists()
 
     def get_absolute_url(self):
         return reverse("ware_page", args=[self.id])
 
     def get_summery_fields(self, user):
-        return {'d': self.id, 'n': self.name, 'de': self.text,
+        return {'d': self.id, 'n': self.creator.name if self.creator else "ناشناس", 'de': self.text, 'da': self.date,
                 "rc": self.rate_count, 'f': self.is_fav(user)}
 
     @staticmethod
@@ -118,6 +151,23 @@ class Post(BaseModel):
         for post in posts:
             data.append(post.get_summery_fields(user))
         return json.dumps(data)
+
+    @property
+    def date(self):
+        now = datetime.datetime.utcnow()
+        sec = (now - self.created_on.replace(tzinfo=None)).total_seconds()
+        if sec < 60:
+            return "%s ثانیه قبل" % int(sec)
+        elif sec < 60 * 60:
+            return "%s دقیقه قبل" % int(sec / 60)
+        elif sec < 60 * 60 * 24:
+            return "%s ساعت قبل" % int(sec / (60 * 60))
+        elif sec < 60 * 60 * 24 * 7:
+            return "%s روز قبل" % int(sec / (60 * 60 * 24))
+        elif sec < 60 * 60 * 24 * 7 * 54:
+            return "%s هفته قبل" % int(sec / (60 * 60 * 24 * 7))
+        else:
+            return pdate_if_date(self.created_on)
 
 
 PostContentType = ContentType.objects.get_for_model(Post)

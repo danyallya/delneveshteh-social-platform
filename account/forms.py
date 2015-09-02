@@ -14,22 +14,18 @@ class SignUpFormNoCaptcha(BaseForm):
 
     class Meta:
         model = Profile
-        fields = ('first_name', 'username', 'email')
+        fields = ('username', 'email')
 
     def __init__(self, *args, **kwargs):
         super(SignUpFormNoCaptcha, self).__init__(*args, **kwargs)
         self.fields['password'] = forms.CharField(required=True, label=u"رمز عبور", widget=forms.PasswordInput)
-        self.fields['re_password'] = forms.CharField(required=True, label=u"تکرار رمز عبور", widget=forms.PasswordInput)
-        self.fields.keyOrder = ['email', 'username', 'password', 're_password', 'first_name']
+        # self.fields['re_password'] = forms.CharField(required=True, label=u"تکرار رمز عبور", widget=forms.PasswordInput)
+        self.fields.keyOrder = ['email', 'username', 'password']
 
     def clean(self):
         cd = super(SignUpFormNoCaptcha, self).clean()
         email = cd.get('email')
         username = cd.get('username')
-        password = cd.get('password')
-        re_password = cd.get('re_password')
-        if (password or re_password) and password != re_password:
-            self.errors['password'] = self.error_class([u'رمز عبور با تکرار آن مطابقت ندارد.'])
         try:
             Profile.objects.get(username=username)
             self.errors['username'] = self.error_class([u'نام کاربری تکراری می باشد.'])
@@ -86,7 +82,8 @@ class ProfileForm(BaseForm):
         super(ProfileForm, self).__init__(*args, **kwargs)
         self.fields['password'] = forms.CharField(required=False, label=u"رمز عبور جدید (در صورت تغییر)",
                                                   widget=forms.PasswordInput)
-        self.fields['re_password'] = forms.CharField(required=False, label=u"تکرار رمز عبور", widget=forms.PasswordInput)
+        self.fields['re_password'] = forms.CharField(required=False, label=u"تکرار رمز عبور",
+                                                     widget=forms.PasswordInput)
         self.provide_fields()
         self.fields.keyOrder = ['email', 'username', 'password', 're_password', 'first_name']
 

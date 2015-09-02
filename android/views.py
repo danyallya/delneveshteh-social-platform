@@ -11,7 +11,7 @@ from account.models import Profile, Suggestion
 from comment.handler import CommentHandler
 from comment.models import Comment
 from favorites.models import Favorite
-from post.models import Post, PostContentType
+from post.models import Post, PostContentType, PostReport, PostLike
 from utils.calverter import gregorian_to_jalali
 from utils.messages import MessageServices
 
@@ -97,7 +97,7 @@ def edit_profile(request):
 def post_list(request):
     p = request.GET.get('p')
 
-    posts_obj = Post.objects.filter(active=True).order_by('id')
+    posts_obj = Post.objects.filter(active=True).order_by('-id')[:5]
 
     if p == 'popular':
         posts_obj = posts_obj
@@ -105,6 +105,72 @@ def post_list(request):
         posts_obj = posts_obj
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def last_post_list(request, last_id):
+    if not last_id or last_id == 0:
+        last_id = 99999999
+
+    posts_obj = Post.objects.filter(active=True, id__gt=last_id).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def next_post_list(request, first_id):
+    if not first_id or first_id == -1:
+        first_id = 0
+
+    posts_obj = Post.objects.filter(active=True, id__lt=first_id).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def send_post(request):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        if text:
+            post = Post(
+                text=striptags(text),
+                creator=request.user if request.user.is_authenticated() else None,
+            )
+
+            post.save()
+
+            data = get_auth_values(request)
+            data.update({'success': True})
+
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': u"متن پست الزامی است."})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    data = get_auth_values(request)
+    PostReport.objects.create(user_id=request.user.id, post=post)
+    data.update({'success': True})
+    return HttpResponse(json.dumps(data), 'application/json')
+
+
+def set_like(request, post_id):
+    get_object_or_404(Post, id=post_id)
+
+    try:
+        l = PostLike.objects.get(user=request.user, post_id=post_id)
+        l.delete()
+        state = 'off'
+    except PostLike.DoesNotExist:
+        PostLike.objects.create(user=request.user, post_id=post_id)
+        state = 'on'
+
+    data = get_auth_values(request)
+    data.update({'s': state})
+    return HttpResponse(json.dumps(data), 'application/json')
 
 
 def post_page(request, post_id):
@@ -116,8 +182,7 @@ def post_page(request, post_id):
 # def recommends(request):
 #     wares = WareModel.objects.filter(active=True, recommends__isnull=False).select_subclasses().distinct()
 #     return HttpResponse(WareModel.get_summery_json(handle_search(request, wares)), 'application/json')
-#
-#
+
 # def populars(request):
 #     wares = WareModel.objects.filter(active=True, populars__isnull=False).exclude(
 #         WareModel.get_default_queryset()).select_subclasses().distinct()

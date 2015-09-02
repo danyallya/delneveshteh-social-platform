@@ -136,6 +136,8 @@ class Post(BaseModel):
         return res
 
     def is_fav(self, user):
+        if user.is_anonymous():
+            return False
         return PostLike.objects.filter(user=user, post_id=self.id).exists()
 
     def get_absolute_url(self):

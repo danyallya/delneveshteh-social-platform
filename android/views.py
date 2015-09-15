@@ -265,6 +265,8 @@ def send_comment(request, post_id, comment_id=None):
             comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
             data.update({'c': comments_arr})
 
+            get_object_or_404(Post, id=post_id).update()
+
             return HttpResponse(json.dumps(data), 'application/json')
         else:
             data = get_auth_values(request)

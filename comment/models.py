@@ -41,6 +41,11 @@ class Comment(models.Model):
             return '---'
         return str(self.reply_to)
 
+    def is_fav(self, user_id):
+        if not user_id:
+            return False
+        return LikeComment.objects.filter(user_id=user_id, comment_id=self.id).exists()
+
     class Meta:
         verbose_name = "نظر"
         verbose_name_plural = "نظرات"

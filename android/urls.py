@@ -20,7 +20,8 @@ urlpatterns = patterns(
     url(r'^send_post/$', 'send_post', name='android_send_post'),
 
     url(r'^report_post/(?P<post_id>\d+)/$', 'report_post', name='android_report_post'),
-    url(r'^like_post/(?P<post_id>\d+)/$', 'set_like', name='android_like_post'),
+    url(r'^like_post/(?P<post_id>\d+)/$', 'like_post', name='android_like_post'),
+    url(r'^like_comment/(?P<comment_id>\d+)/$', 'like_comment', name='android_like_comment'),
 
     url(r'^post/(?P<post_id>\d+)/$', 'post_page', name='android_post_page'),
 

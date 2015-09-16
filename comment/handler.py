@@ -107,7 +107,7 @@ class CommentHandler:
         for comment in comments:
             children_list = self.comments_children[str(comment.id)]
             item = {'i': comment.id, 'l': comment.like_count, 'u': str(comment.user_name),
-                    't': linebreaksbr(comment.text),
+                    't': linebreaksbr(comment.text), 'f': comment.is_fav(self.user_id),
                     'd': comment.date, 'c': self.render_comments_json_items(children_list),
                     'm': comment.user_id == self.user_id}
 

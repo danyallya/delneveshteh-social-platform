@@ -9,7 +9,7 @@ from django.utils.encoding import smart_text
 from account.forms import SignUpFormNoCaptcha, ProfileForm
 from account.models import Profile, Suggestion
 from comment.handler import CommentHandler
-from comment.models import Comment
+from comment.models import Comment, LikeComment
 from favorites.models import Favorite
 from post.models import Post, PostContentType, PostReport, PostLike
 from utils.calverter import gregorian_to_jalali
@@ -97,12 +97,15 @@ def edit_profile(request):
 def post_list(request):
     p = request.GET.get('p')
 
-    posts_obj = Post.objects.filter(active=True).order_by('-id')[:5]
-
     if p == 'popular':
-        posts_obj = posts_obj
+        posts_obj = Post.objects.filter(active=True, like_count__gt=0).order_by('-like_count')[:20]
     elif p == 'favs':
-        posts_obj = posts_obj
+        if request.user.is_anonymous():
+            posts_obj = Post.objects.filter(active=True).order_by('-id')[:20]
+        else:
+            posts_obj = Post.objects.filter(active=True, likes__user=request.user).order_by('-id')
+    else:
+        posts_obj = Post.objects.filter(active=True).order_by('-id')[:5]
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
@@ -157,8 +160,8 @@ def report_post(request, post_id):
     return HttpResponse(json.dumps(data), 'application/json')
 
 
-def set_like(request, post_id):
-    get_object_or_404(Post, id=post_id)
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
 
     try:
         l = PostLike.objects.get(user=request.user, post_id=post_id)
@@ -168,8 +171,28 @@ def set_like(request, post_id):
         PostLike.objects.create(user=request.user, post_id=post_id)
         state = 'on'
 
+    post.refresh_from_db()
+
     data = get_auth_values(request)
-    data.update({'s': state})
+    data.update({'s': state, 'lc': post.like_count})
+    return HttpResponse(json.dumps(data), 'application/json')
+
+
+def like_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    try:
+        l = LikeComment.objects.get(user=request.user, comment_id=comment_id)
+        l.delete()
+        state = 'off'
+    except LikeComment.DoesNotExist:
+        LikeComment.objects.create(user=request.user, comment_id=comment_id)
+        state = 'on'
+
+    comment.refresh_from_db()
+
+    data = get_auth_values(request)
+    data.update({'s': state, 'lc': comment.like_count})
     return HttpResponse(json.dumps(data), 'application/json')
 
 

@@ -112,12 +112,7 @@ class Post(BaseModel):
         )
         comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
 
-        if user.is_anonymous():
-            lk = list()
-        else:
-            lk = list(LikeComment.objects.filter(user=user).values_list('comment_id', flat=True))
-
-        data.update({'cj': comments_json, 'cl': lk})
+        data.update({'cj': comments_json})
 
         return json.dumps(data)
 

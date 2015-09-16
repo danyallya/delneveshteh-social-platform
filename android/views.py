@@ -101,7 +101,7 @@ def post_list(request):
         posts_obj = Post.objects.filter(active=True, like_count__gt=0).order_by('-like_count')[:20]
     elif p == 'favs':
         if request.user.is_anonymous():
-            posts_obj = Post.objects.filter(active=True).order_by('-id')[:20]
+            posts_obj = Post.objects.none()
         else:
             posts_obj = Post.objects.filter(active=True, likes__user=request.user).order_by('-id')
     else:

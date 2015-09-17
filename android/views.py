@@ -302,19 +302,22 @@ def send_comment(request, post_id, comment_id=None):
 
 def send_suggestion(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
         email = request.POST.get('email')
         title = request.POST.get('title')
+        sug_type = request.POST.get('sug_type')
+        print(sug_type)
         body = request.POST.get('body')
+        phone = request.POST.get('phone')
         user = None
         if request.user.is_authenticated():
             user = request.user
-        if name and email and title and body:
+        if title and body:
             suggestion = Suggestion(
-                name=name,
                 email=email,
-                title=title,
+                name=title,
                 body=body,
+                phone=phone,
+                sug_type=sug_type,
                 creator=user,
             )
             suggestion.save()
@@ -323,7 +326,7 @@ def send_suggestion(request):
             return HttpResponse(json.dumps(data), 'application/json')
         else:
             data = get_auth_values(request)
-            data.update({'success': False, 'm': u"لطفا همه فیلدها را پر نمایید."})
+            data.update({'success': False, 'm': u"لطفا فیلدهای ضروری را پر نمایید."})
             response = HttpResponse(json.dumps(data), 'application/json')
             return append_csrf(request, response)
     else:

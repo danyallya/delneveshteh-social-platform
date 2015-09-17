@@ -55,15 +55,15 @@ class Comment(models.Model):
         now = datetime.datetime.utcnow()
         sec = (now - self.created_on.replace(tzinfo=None)).total_seconds()
         if sec < 60:
-            return "%s ثانیه قبل" % int(sec)
+            return "%s    ثانیه   قبل" % int(sec)
         elif sec < 60 * 60:
-            return "%s دقیقه قبل" % int(sec / 60)
+            return "%s    دقیقه   قبل" % int(sec / 60)
         elif sec < 60 * 60 * 24:
-            return "%s ساعت قبل" % int(sec / (60 * 60))
+            return "%s    ساعت   قبل" % int(sec / (60 * 60))
         elif sec < 60 * 60 * 24 * 7:
-            return "%s روز قبل" % int(sec / (60 * 60 * 24))
+            return "%s    روز   قبل" % int(sec / (60 * 60 * 24))
         elif sec < 60 * 60 * 24 * 7 * 54:
-            return "%s هفته قبل" % int(sec / (60 * 60 * 24 * 7))
+            return "%s    هفته   قبل" % int(sec / (60 * 60 * 24 * 7))
         else:
             return pdate_if_date(self.created_on)
 

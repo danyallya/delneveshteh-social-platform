@@ -37,19 +37,18 @@ class Profile(AbstractUser):
 
 class Suggestion(BaseModel):
     SUGGESTION_TYPES = (
-        (1, "پیشنهاد"),
-        (2, "انتقاد"),
-        (3, "نظر"),
-        (4, "سفارش تبلیغات"),
+        (1, "پیشنهاد و انتقاد"),
+        (2, "تبلیغات"),
+        (3, "ثبت سفارش"),
     )
     sug_type = models.IntegerField(verbose_name="نوع", null=True, default=1, choices=SUGGESTION_TYPES)
     email = models.EmailField(verbose_name=u"ایمیل", null=True)
-    title = models.CharField(verbose_name=u"عنوان", null=True, max_length=700)
-    body = models.CharField(verbose_name=u"متن", null=True, max_length=3000)
+    body = models.TextField(verbose_name=u"متن", null=True, max_length=3000)
+    phone = models.CharField(verbose_name=u"شماره تماس", null=True, max_length=100)
 
     class Meta:
         verbose_name = u"تماس با ما"
         verbose_name_plural = u"تماس با ما"
 
     def __str__(self):
-        return self.title
+        return self.name

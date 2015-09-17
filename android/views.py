@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse, Http404
@@ -126,6 +127,7 @@ def next_post_list(request, first_id):
     posts_obj = Post.objects.filter(active=True, id__lt=first_id).order_by('-id')[:5]
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
 
 @login_required
 def send_post(request):
@@ -381,3 +383,9 @@ def append_csrf(request, response):
     csrf = get_token(request)
     response.set_cookie(key='csrf', value=csrf)
     return response
+
+
+def app_info(request):
+    data = {"v": settings.LAST_APP_VERSION, "s": settings.LAST_APP_SIZE, "c": settings.LAST_CHANGES,
+            "l": settings.LAST_APP_LINK}
+    return HttpResponse(json.dumps(data), 'application/json')

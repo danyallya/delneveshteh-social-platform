@@ -31,4 +31,6 @@ urlpatterns = patterns(
     url(r'^send_suggestion/$', 'send_suggestion', name='android_send_suggestion'),
     url(r'^forget/$', 'forget', name='android_forget'),
 
+    url(r'^app_info/$', 'app_info', name='android_app_info'),
+
 )

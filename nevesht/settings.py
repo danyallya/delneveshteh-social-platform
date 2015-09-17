@@ -144,6 +144,17 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'delneveshte.app@gmail.com'
 EMAIL_HOST_PASSWORD = '13712533485'
 
+LAST_APP_VERSION = "1.0.4"
+
+LAST_APP_LINK = "http://parkgroup.ir/apps/Nasim.apk"
+
+LAST_APP_SIZE = "1.8 مگابایت"
+
+LAST_CHANGES = """
+تغییرات گرافیکی
+رفع برخی خطاهای نرم افزار
+"""
+
 try:
     from .prk_set import *
 except ImportError:

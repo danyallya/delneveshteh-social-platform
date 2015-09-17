@@ -10,7 +10,7 @@ class CommentAdmin(HardModelAdmin):
     search_fields = ('text',)
 
     fieldsets = (
-        (None, {'fields': ('user', 'user_name', 'text', 'active')}),
+        (None, {'fields': ('user', 'user_name', 'text', 'active', 'color')}),
     )
 
     def get_desc(self, obj):

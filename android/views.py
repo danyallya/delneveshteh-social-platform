@@ -127,7 +127,7 @@ def next_post_list(request, first_id):
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
-
+@login_required
 def send_post(request):
     if request.method == 'POST':
         text = request.POST.get('text')
@@ -135,6 +135,7 @@ def send_post(request):
             post = Post(
                 text=striptags(text),
                 creator=request.user if request.user.is_authenticated() else None,
+                name=request.user.username
             )
 
             post.save()
@@ -160,6 +161,7 @@ def report_post(request, post_id):
     return HttpResponse(json.dumps(data), 'application/json')
 
 
+@login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
@@ -178,6 +180,7 @@ def like_post(request, post_id):
     return HttpResponse(json.dumps(data), 'application/json')
 
 
+@login_required
 def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -260,6 +263,7 @@ def my_comments(request):
     return HttpResponse(json.dumps(comments_dict), 'application/json')
 
 
+@login_required
 def send_comment(request, post_id, comment_id=None):
     if request.method == 'POST':
         text = request.POST.get('text')

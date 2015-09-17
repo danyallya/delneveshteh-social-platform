@@ -21,6 +21,8 @@ class Comment(models.Model):
     like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
     active = models.BooleanField(verbose_name="نمایش نظر", default=True)
 
+    color = models.CharField(verbose_name="رنگ", max_length=10, default="#E6E6E6")
+
     fav = models.BooleanField("علاقه مندی", default=False)
 
     def __str__(self):
@@ -28,12 +30,6 @@ class Comment(models.Model):
             return self.text[:30] + " ..."
         else:
             return self.text
-
-    @property
-    def color(self):
-        if not self.active:
-            return u"<font color='#aa0707'>تاییدنشده</font>"
-        return u"<font color='#17c50a'>تاییدشده</font>"
 
     @property
     def reply(self):

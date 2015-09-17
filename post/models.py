@@ -85,6 +85,8 @@ class Post(BaseModel):
     text = models.TextField()
     active = models.BooleanField(verbose_name="نمایش", default=True)
 
+    color = models.CharField(verbose_name="رنگ", max_length=10, default="#528c8a")
+
     rate = models.FloatField(verbose_name="امتیاز", default=0, null=True)
     comments_count = models.IntegerField(verbose_name="تعداد امتیازها", default=0, null=True)
 
@@ -94,6 +96,9 @@ class Post(BaseModel):
         verbose_name = "پست"
         verbose_name_plural = "پست ها"
         get_latest_by = 'created_on'
+
+    def __str__(self):
+        return str(self.creator)
 
     def update(self):
         self.like_count = self.likes.count()
@@ -144,7 +149,7 @@ class Post(BaseModel):
 
     def get_summery_fields(self, user):
         return {'d': self.id, 'n': self.creator.name if self.creator else "ناشناس", 'de': self.text, 'da': self.date,
-                "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user)}
+                "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user), 'co': self.color}
 
     @staticmethod
     def get_summery_json(posts, user):

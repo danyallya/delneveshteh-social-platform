@@ -30,4 +30,4 @@ class PostLikeAdmin(HardModelAdmin):
 
 
 admin.site.register(PostLike, PostLikeAdmin)
-admin.site.register(Post)
+admin.site.register(Post, HardModelAdmin)

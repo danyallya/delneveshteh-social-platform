@@ -1,5 +1,5 @@
 """
-WSGI config for fanoos project.
+WSGI config for prk project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -8,9 +8,14 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
 import os
+import sys
 
+sys.path.append('/home/apps/delnev')
+sys.path.append('/home/apps/delnev/nevesht')
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nevesht.settings")
+
+# serve django via WSGI
 from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fanoos.settings")
 
 application = get_wsgi_application()

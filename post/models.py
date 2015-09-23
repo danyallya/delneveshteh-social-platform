@@ -175,5 +175,7 @@ class Post(BaseModel):
         else:
             return pdate_if_date(self.created_on)
 
-
-PostContentType = ContentType.objects.get_for_model(Post)
+try:
+    PostContentType = ContentType.objects.get_for_model(Post)
+except:
+    pass

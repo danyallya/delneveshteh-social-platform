@@ -104,7 +104,8 @@ class Post(BaseModel):
         self.like_count = self.likes.count()
         self.comments_count = Comment.objects.filter(
             content_type=PostContentType,
-            object_pk=smart_text(self.id)
+            object_pk=smart_text(self.id),
+            active=True
         ).count()
         self.save()
 

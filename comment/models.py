@@ -67,6 +67,13 @@ class Comment(models.Model):
         self.like_count = self.likecomment_set.count()
         self.save()
 
+    def save(self, *args, **kwargs):
+        super(Comment, self).save(args, kwargs)
+        try:
+            self.content_type.model_class().objects.get(id=self.object_pk).update()
+        except:
+            pass
+
 
 class LikeComment(models.Model):
     user = models.ForeignKey(Profile, verbose_name="کاربر")

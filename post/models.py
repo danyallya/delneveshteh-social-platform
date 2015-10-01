@@ -83,7 +83,7 @@ class PostReport(models.Model):
 
 class Post(BaseModel):
     text = models.TextField()
-    active = models.BooleanField(verbose_name="نمایش", default=True)
+    active = models.BooleanField(verbose_name="نمایش", default=False)
 
     color = models.CharField(verbose_name="رنگ", max_length=10, default="#528c8a")
 
@@ -113,7 +113,8 @@ class Post(BaseModel):
 
         comments = Comment.objects.filter(
             content_type=PostContentType,
-            object_pk=smart_text(self.id)
+            object_pk=smart_text(self.id),
+            active=True
         )
         comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
 
@@ -126,6 +127,7 @@ class Post(BaseModel):
         comments = Comment.objects.filter(
             content_type=c_type,
             object_pk=smart_text(self.id),
+            active=True
         )
         comments_dict = []
         for comment in comments:

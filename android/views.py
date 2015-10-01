@@ -165,7 +165,7 @@ def report_post(request, post_id):
 
 @login_required
 def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id, active=True)
 
     try:
         l = PostLike.objects.get(user=request.user, post_id=post_id)
@@ -202,7 +202,7 @@ def like_comment(request, comment_id):
 
 
 def post_page(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id, active=True)
 
     return HttpResponse(post.get_detail_json(request.user), 'application/json')
 
@@ -289,6 +289,7 @@ def send_comment(request, post_id, comment_id=None):
             comments = Comment.objects.filter(
                 content_type=PostContentType,
                 object_pk=smart_text(post_id),
+                active=True
             )
 
             comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()

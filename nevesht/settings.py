@@ -144,11 +144,11 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'delneveshte.app@gmail.com'
 EMAIL_HOST_PASSWORD = '13712533485'
 
-LAST_APP_VERSION = "1.0.4"
+LAST_APP_VERSION = "1.0.6"
 
-LAST_APP_LINK = "http://parkgroup.ir/apps/Nasim.apk"
+LAST_APP_LINK = "http://del.prkgroup.ir/media/del_v1.0.6.apk"
 
-LAST_APP_SIZE = "1.8 مگابایت"
+LAST_APP_SIZE = "1.9 مگابایت"
 
 LAST_CHANGES = """
 تغییرات گرافیکی

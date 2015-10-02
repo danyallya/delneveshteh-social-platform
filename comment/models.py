@@ -19,7 +19,7 @@ class Comment(models.Model):
     reply_to = models.ForeignKey('Comment', null=True, blank=True, default=None, related_name='children',
                                  on_delete=models.SET_NULL)
     like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
-    active = models.BooleanField(verbose_name="نمایش نظر", default=False)
+    active = models.BooleanField(verbose_name="نمایش نظر", default=True)
 
     color = models.CharField(verbose_name="رنگ", max_length=10, default="#E6E6E6")
 

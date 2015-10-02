@@ -83,7 +83,7 @@ class PostReport(models.Model):
 
 class Post(BaseModel):
     text = models.TextField()
-    active = models.BooleanField(verbose_name="نمایش", default=False)
+    active = models.BooleanField(verbose_name="نمایش", default=True)
 
     color = models.CharField(verbose_name="رنگ", max_length=10, default="#528c8a")
 

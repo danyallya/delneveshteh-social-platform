@@ -1,5 +1,6 @@
 import datetime
 import json
+from colorful.fields import RGBColorField
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -85,10 +86,10 @@ class Post(BaseModel):
     text = models.TextField()
     active = models.BooleanField(verbose_name="نمایش", default=True)
 
-    color = models.CharField(verbose_name="رنگ", max_length=10, default="#528c8a")
+    color = RGBColorField(verbose_name="رنگ", default="#528c8a")
 
     rate = models.FloatField(verbose_name="امتیاز", default=0, null=True)
-    comments_count = models.IntegerField(verbose_name="تعداد امتیازها", default=0, null=True)
+    comments_count = models.IntegerField(verbose_name="تعداد نظرها", default=0, null=True)
 
     like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
 
@@ -98,7 +99,10 @@ class Post(BaseModel):
         get_latest_by = 'created_on'
 
     def __str__(self):
-        return str(self.creator)
+        if len(self.text) > 31:
+            return self.text[:30] + " ..."
+        else:
+            return self.text
 
     def update(self):
         self.like_count = self.likes.count()
@@ -177,6 +181,7 @@ class Post(BaseModel):
             return "%s هفته قبل" % int(sec / (60 * 60 * 24 * 7))
         else:
             return pdate_if_date(self.created_on)
+
 
 try:
     PostContentType = ContentType.objects.get_for_model(Post)

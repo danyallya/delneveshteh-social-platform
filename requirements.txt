@@ -4,3 +4,4 @@ Pillow
 django-simple-captcha
 django-model-utils
 pymysql
+django-colorful

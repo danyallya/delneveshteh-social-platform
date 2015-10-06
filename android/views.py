@@ -132,10 +132,10 @@ def next_post_list(request, first_id):
 @login_required
 def send_post(request):
     if request.method == 'POST':
-        text = request.POST.get('text')
+        text = striptags(request.POST.get('text')).strip()
         if text:
             post = Post(
-                text=striptags(text),
+                text=text,
                 creator=request.user if request.user.is_authenticated() else None,
                 name=request.user.username
             )
@@ -268,7 +268,7 @@ def my_comments(request):
 @login_required
 def send_comment(request, post_id, comment_id=None):
     if request.method == 'POST':
-        text = request.POST.get('text')
+        text = striptags(request.POST.get('text')).strip()
         comment = None
         if comment_id:
             comment = get_object_or_404(Comment, id=comment_id)

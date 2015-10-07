@@ -8,6 +8,28 @@ admin.site.register(Suggestion, HardModelAdmin)
 
 class UserProfileAdmin(UserAdmin):
     ordering = ('-date_joined',)
+    list_display = ('username', 'email', 'post_count', 'comment_count', 'like_count', 'report_count', 'is_staff')
+
+    def post_count(self, obj):
+        return obj.post_set.count()
+
+    post_count.short_description = u"پست"
+
+    def comment_count(self, obj):
+        return obj.comment_set.count()
+
+    comment_count.short_description = u"کامنت"
+
+    def like_count(self, obj):
+        return obj.postlike_set.count()
+
+    like_count.short_description = u"پسندیدن"
+
+    def report_count(self, obj):
+        return obj.postreport_set.count()
+
+    report_count.short_description = u"تعداد گزارش کردن"
+
     # inlines = (ProfileInline, )
     # fieldsets = (
     #     (None, {'fields': ('username', 'password')}),
@@ -47,5 +69,6 @@ class UserProfileAdmin(UserAdmin):
     #         obj.profile
     #     except Profile.DoesNotExist:
     #         Profile.objects.create(user=obj, active=True)
+
 
 admin.site.register(Profile, UserProfileAdmin)

@@ -38,7 +38,7 @@ class PostLikeAdmin(HardModelAdmin):
 class PostAdmin(HardModelAdmin):
     list_display = ['creator', 'get_text', 'like_count', 'comments_count', 'active']
     list_filter = ('created_on',)
-    search_fields = ('post__text',)
+    search_fields = ('text', 'creator__username')
 
     def get_text(self, obj):
         return str(obj)

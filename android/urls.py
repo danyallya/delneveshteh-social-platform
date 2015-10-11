@@ -18,8 +18,8 @@ urlpatterns = patterns(
     url(r'^next_posts/(?P<first_id>\d+)/$', 'next_post_list', name='android_next_post_list'),
 
     url(r'^user_posts/(?P<username>\w+)/$$', 'user_post_list', name='android_user_posts'),
-    url(r'^user_posts/(?P<username>\w+)/$(?P<first_id>\d+)/$', 'user_last_post_list', name='android_user_last_post_list'),
-    url(r'^next_posts/(?P<username>\w+)/$(?P<first_id>\d+)/$', 'user_next_post_list', name='android_user_next_post_list'),
+    url(r'^user_posts/(?P<username>\w+)/$(?P<last_id>\d+)/$', 'user_last_post_list', name='android_user_last_post_list'),
+    url(r'^user_next_posts/(?P<username>\w+)/$(?P<first_id>\d+)/$', 'user_next_post_list', name='android_user_next_post_list'),
 
     url(r'^last_post_count/(?P<last_id>\d+)/$', 'last_post_count', name='android_last_post_count'),
 

@@ -95,6 +95,15 @@ def edit_profile(request):
         return initial_post(request)
 
 
+def last_post_count(request, last_id):
+    if not last_id or last_id == 0:
+        last_id = 99999999
+
+    count = Post.objects.filter(active=True, id__gt=last_id).count()
+
+    return HttpResponse(json.dumps({'c': count}), 'application/json')
+
+
 def post_list(request):
     p = request.GET.get('p')
 
@@ -125,6 +134,30 @@ def next_post_list(request, first_id):
         first_id = 0
 
     posts_obj = Post.objects.filter(active=True, id__lt=first_id).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def user_post_list(request, username):
+    posts_obj = Post.objects.filter(active=True, creator__usernmae=username).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def user_last_post_list(request, username, last_id):
+    if not last_id or last_id == 0:
+        last_id = 99999999
+
+    posts_obj = Post.objects.filter(active=True, id__gt=last_id, creator__usernmae=username).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def user_next_post_list(request, username, first_id):
+    if not first_id or first_id == -1:
+        first_id = 0
+
+    posts_obj = Post.objects.filter(active=True, id__lt=first_id, creator__usernmae=username).order_by('-id')[:5]
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 

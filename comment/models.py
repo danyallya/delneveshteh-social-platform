@@ -74,6 +74,14 @@ class Comment(models.Model):
         except:
             pass
 
+    def delete(self, using=None):
+        obj = self.content_type.model_class().objects.get(id=self.object_pk)
+        super(Comment, self).delete(using)
+        try:
+            obj.update()
+        except:
+            pass
+
 
 class LikeComment(models.Model):
     user = models.ForeignKey(Profile, verbose_name="کاربر")

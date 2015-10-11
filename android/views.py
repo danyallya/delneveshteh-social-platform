@@ -138,13 +138,15 @@ def next_post_list(request, first_id):
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
 
-def user_post_list(request, username):
+def user_post_list(request):
+    username = request.GET.get('u')
     posts_obj = Post.objects.filter(active=True, creator__username=username).order_by('-id')[:5]
 
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
 
-def user_last_post_list(request, username, last_id):
+def user_last_post_list(request, last_id):
+    username = request.GET.get('u')
     if not last_id or last_id == 0:
         last_id = 99999999
 
@@ -153,7 +155,8 @@ def user_last_post_list(request, username, last_id):
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
 
-def user_next_post_list(request, username, first_id):
+def user_next_post_list(request, first_id):
+    username = request.GET.get('u')
     if not first_id or first_id == -1:
         first_id = 0
 

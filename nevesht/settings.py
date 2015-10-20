@@ -151,8 +151,8 @@ LAST_APP_LINK = "http://del.prkgroup.ir/media/del_v1.0.6.apk"
 LAST_APP_SIZE = "1.9 مگابایت"
 
 LAST_CHANGES = """
-تغییرات گرافیکی
-رفع برخی خطاهای نرم افزار
+بهبود نرم افزار
+اضافه کردن امکان به اشتراک گذاری و کپی
 """
 
 try:

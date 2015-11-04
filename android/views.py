@@ -168,7 +168,7 @@ def user_next_post_list(request, first_id):
 @login_required
 def send_post(request):
     if request.method == 'POST':
-        text = striptags(request.POST.get('text')).strip()
+        text = striptags(request.POST.get('text')).strip().replace("/[\u2190-\u21FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u3000-\u303F]|[\u1F300-\u1F64F]|[\u1F680-\u1F6FF]/g", "")
         if text:
             post = Post(
                 text=text,

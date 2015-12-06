@@ -1,20 +1,17 @@
 import datetime
 import json
-from colorful.fields import RGBColorField
 
+from colorful.fields import RGBColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.db import models
-
 from django.utils.encoding import smart_text
 
 from account.models import Profile
 from comment.handler import CommentHandler
-from comment.models import Comment, LikeComment
-from favorites.models import Favorite
+from comment.models import Comment
 from utils.calverter import gregorian_to_jalali
-from utils.models import BaseModel, Named
+from utils.models import BaseModel
 from utils.templatetags.date_template_tags import pdate_if_date
 
 
@@ -93,6 +90,21 @@ class Post(BaseModel):
 
     like_count = models.IntegerField(verbose_name="پسندیدن", default=0)
 
+    POST_TYPES = (
+        (1, 'دلنوشته'),
+        (2, 'بحث'),
+        (3, 'مناسبت'),
+        (4, 'حدیث'),
+    )
+
+    post_type = models.IntegerField(verbose_name="نوع", default=1)
+
+    is_spec = models.BooleanField(verbose_name="داغ", default=False)
+
+    version_code = models.IntegerField(verbose_name="ورژن نرم افزار", default=1)
+
+    android_version = models.CharField(verbose_name="ورژن اندروید", default="")
+
     class Meta:
         verbose_name = "پست"
         verbose_name_plural = "پست ها"
@@ -150,9 +162,6 @@ class Post(BaseModel):
         if user.is_anonymous():
             return False
         return PostLike.objects.filter(user=user, post_id=self.id).exists()
-
-    def get_absolute_url(self):
-        return reverse("ware_page", args=[self.id])
 
     def get_summery_fields(self, user):
         return {'d': self.id, 'n': self.creator.name if self.creator else "ناشناس", 'de': self.text, 'da': self.date,

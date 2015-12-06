@@ -1,6 +1,7 @@
+import datetime
 import json
-from django.conf import settings
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -15,6 +16,7 @@ from favorites.models import Favorite
 from post.models import Post, PostContentType, PostReport, PostLike
 from utils.calverter import gregorian_to_jalali
 from utils.messages import MessageServices
+from utils.templatetags.date_template_tags import pdate_if_date
 
 
 def logout(request):
@@ -45,6 +47,7 @@ def login(request):
         else:
             login(request, user)
             # print get_auth_values(request)
+            check_user(request)
             return HttpResponse(json.dumps(get_auth_values(request)),
                                 'application/json')
     else:
@@ -74,6 +77,7 @@ def signup(request):
 
 @login_required
 def edit_profile(request):
+    check_user(request)
     if request.method == 'POST':
         profile = request.user
         post = request.POST.copy()
@@ -96,6 +100,7 @@ def edit_profile(request):
 
 
 def last_post_count(request, last_id):
+    check_user(request)
     if not last_id or last_id == 0:
         last_id = 99999999
 
@@ -105,6 +110,7 @@ def last_post_count(request, last_id):
 
 
 def post_list(request):
+    check_user(request)
     p = request.GET.get('p')
 
     if p == 'popular':
@@ -121,6 +127,7 @@ def post_list(request):
 
 
 def last_post_list(request, last_id):
+    check_user(request)
     if not last_id or last_id == 0:
         last_id = 99999999
 
@@ -130,6 +137,7 @@ def last_post_list(request, last_id):
 
 
 def next_post_list(request, first_id):
+    check_user(request)
     if not first_id or first_id == -1:
         first_id = 0
 
@@ -139,6 +147,7 @@ def next_post_list(request, first_id):
 
 
 def user_post_list(request):
+    check_user(request)
     username = request.GET.get('u')
     posts_obj = Post.objects.filter(active=True, creator__username=username).order_by('-id')[:5]
 
@@ -146,6 +155,7 @@ def user_post_list(request):
 
 
 def user_last_post_list(request, last_id):
+    check_user(request)
     username = request.GET.get('u')
     if not last_id or last_id == 0:
         last_id = 99999999
@@ -156,6 +166,7 @@ def user_last_post_list(request, last_id):
 
 
 def user_next_post_list(request, first_id):
+    check_user(request)
     username = request.GET.get('u')
     if not first_id or first_id == -1:
         first_id = 0
@@ -165,10 +176,50 @@ def user_next_post_list(request, first_id):
     return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
 
 
+def user_posts(request):
+    check_user(request)
+
+    username = request.GET.get('u')
+    first_id = request.GET.get('f')
+    last_id = request.GET.get('l')
+
+    posts_obj = Post.objects.filter(active=True)
+
+    if username:
+        user = get_object_or_404(Profile, username=username)
+        posts_obj = posts_obj.filter(creator__username=username)
+
+    if first_id:
+        posts_obj = posts_obj.filter(id__lt=first_id)
+
+    if last_id:
+        posts_obj = posts_obj.filter(id__gt=last_id)
+
+    posts_obj = posts_obj.distinct().order_by('-id')[:5]
+
+    data = []
+    for post in posts_obj:
+        data.append(post.get_summery_fields(request.user))
+
+    res = {'d': data}
+
+    if username:
+        res['u'] = username
+        res['p'] = Post.objects.filter(active=True, creator__username=username).count()
+        res['c'] = Comment.objects.filter(active=True, user__username=username).count()
+        res['d'] = pdate_if_date(user.date_joined)
+        res['l'] = user.last_date
+
+    return HttpResponse(json.dumps(res), 'application/json')
+
+
 @login_required
 def send_post(request):
+    check_user(request)
     if request.method == 'POST':
-        text = striptags(request.POST.get('text')).strip().replace("/[\u2190-\u21FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u3000-\u303F]|[\u1F300-\u1F64F]|[\u1F680-\u1F6FF]/g", "")
+        text = striptags(request.POST.get('text')).strip().replace(
+            "/[\u2190-\u21FF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u3000-\u303F]|[\u1F300-\u1F64F]|[\u1F680-\u1F6FF]/g",
+            "")
         if text:
             post = Post(
                 text=text,
@@ -192,6 +243,7 @@ def send_post(request):
 
 
 def report_post(request, post_id):
+    check_user(request)
     post = get_object_or_404(Post, id=post_id)
     data = get_auth_values(request)
     PostReport.objects.create(user_id=request.user.id, post=post)
@@ -201,6 +253,7 @@ def report_post(request, post_id):
 
 @login_required
 def like_post(request, post_id):
+    check_user(request)
     post = get_object_or_404(Post, id=post_id, active=True)
 
     try:
@@ -220,6 +273,7 @@ def like_post(request, post_id):
 
 @login_required
 def like_comment(request, comment_id):
+    check_user(request)
     comment = get_object_or_404(Comment, id=comment_id)
 
     try:
@@ -238,6 +292,7 @@ def like_comment(request, comment_id):
 
 
 def post_page(request, post_id):
+    check_user(request)
     post = get_object_or_404(Post, id=post_id, active=True)
 
     return HttpResponse(post.get_detail_json(request.user), 'application/json')
@@ -255,6 +310,7 @@ def post_page(request, post_id):
 
 @login_required
 def set_fav(request, movie_id):
+    check_user(request)
     try:
         movie = Post.objects.get(id=movie_id)
     except Post.DoesNotExist:
@@ -274,6 +330,7 @@ def set_fav(request, movie_id):
 
 @login_required
 def my_fav(request):
+    check_user(request)
     fav_s = Favorite.objects.filter(
         user=request.user, )
     # ).distinct('object_id')
@@ -287,6 +344,7 @@ def my_fav(request):
 
 @login_required
 def my_comments(request):
+    check_user(request)
     comments = Comment.objects.filter(
         user=request.user,
     )
@@ -303,6 +361,7 @@ def my_comments(request):
 
 @login_required
 def send_comment(request, post_id, comment_id=None):
+    check_user(request)
     if request.method == 'POST':
         text = striptags(request.POST.get('text')).strip()
         comment = None
@@ -344,6 +403,7 @@ def send_comment(request, post_id, comment_id=None):
 
 
 def send_suggestion(request):
+    check_user(request)
     if request.method == 'POST':
         email = request.POST.get('email')
         title = request.POST.get('title')
@@ -422,7 +482,14 @@ def append_csrf(request, response):
     return response
 
 
+def check_user(request):
+    if request.user.is_authenticated():
+        request.user.last_act = datetime.datetime.utcnow()
+        request.user.save()
+
+
 def app_info(request):
     data = {"v": settings.LAST_APP_VERSION, "s": settings.LAST_APP_SIZE, "c": settings.LAST_CHANGES,
             "l": settings.LAST_APP_LINK}
     return HttpResponse(json.dumps(data), 'application/json')
+

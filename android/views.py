@@ -204,11 +204,7 @@ def user_posts(request):
     res = {'d': data}
 
     if username:
-        res['u'] = username
-        res['p'] = Post.objects.filter(active=True, creator__username=username).count()
-        res['c'] = Comment.objects.filter(active=True, user__username=username).count()
-        res['d'] = pdate_if_date(user.date_joined)
-        res['l'] = user.last_date
+        res.update(user.get_user_summery())
 
     return HttpResponse(json.dumps(res), 'application/json')
 
@@ -226,6 +222,11 @@ def send_post(request):
                 creator=request.user if request.user.is_authenticated() else None,
                 name=request.user.username
             )
+
+            p = request.POST.get('p')
+
+            if p:
+                post.post_type = Post.get_post_type_by_param(p)
 
             post.save()
 
@@ -459,6 +460,161 @@ def forget(request):
         return initial_post(request)
 
 
+def posts(request):
+    check_user(request)
+    p = request.GET.get('p')
+
+    posts_obj = Post.get_queryset_by_param(p).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def last_posts(request, last_id):
+    check_user(request)
+    if not last_id or last_id == 0:
+        last_id = 99999999
+
+    p = request.GET.get('p')
+
+    posts_obj = Post.get_queryset_by_param(p)
+
+    posts_obj = posts_obj.filter(id__gt=last_id).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def next_posts(request, first_id):
+    check_user(request)
+    if not first_id or first_id == -1:
+        first_id = 0
+
+    p = request.GET.get('p')
+
+    posts_obj = Post.get_queryset_by_param(p)
+
+    posts_obj = posts_obj.filter(id__lt=first_id).order_by('-id')[:5]
+
+    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+
+
+def page(request, post_id):
+    check_user(request)
+    post = get_object_or_404(Post, id=post_id, active=True)
+
+    return HttpResponse(post.get_page_json(request.user), 'application/json')
+
+
+@login_required
+def post_comment(request, post_id, comment_id=None):
+    check_user(request)
+    if request.method == 'POST':
+        text = striptags(request.POST.get('text')).strip()
+        comment = None
+        if comment_id:
+            comment = get_object_or_404(Comment, id=comment_id)
+        if text:
+            comment = Comment(
+                content_type=PostContentType,
+                object_pk=smart_text(post_id),
+                text=striptags(text),
+                user=request.user if request.user.is_authenticated() else None,
+                user_name=request.user.username or "ناشناس",
+                reply_to=comment
+            )
+
+            comment.save()
+            data = get_auth_values(request)
+            data.update({'success': True})
+
+            comments = Comment.objects.filter(
+                content_type=PostContentType,
+                object_pk=smart_text(post_id),
+                active=True
+            ).order_by('-id')
+
+            comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
+            data.update({'c': comments_arr})
+
+            get_object_or_404(Post, id=post_id).update()
+
+            return HttpResponse(json.dumps(data), 'application/json')
+        else:
+            data = get_auth_values(request)
+            data.update({'success': False, 'm': u"متن نظر الزامی است."})
+            response = HttpResponse(json.dumps(data), 'application/json')
+            return append_csrf(request, response)
+    else:
+        return initial_post(request)
+
+
+def users_page(request):
+    check_user(request)
+    p = request.GET.get('p')
+
+    users_obj = Profile.get_queryset_by_param(p)[:20]
+
+    res = []
+
+    for user in users_obj:
+        res.append(user.get_user_summery())
+
+    return HttpResponse(json.dumps(res), 'application/json')
+
+
+def search_page(request):
+    check_user(request)
+
+    term = request.GET.get('t')
+    post_type = request.GET.get('ty')
+    first_id = request.GET.get('f')
+
+    posts_obj = Post.objects.filter(active=True)
+
+    if term:
+        posts_obj = posts_obj.filter(text__icontains=term)
+
+    if post_type:
+        posts_obj = posts_obj.filter(post_type=post_type)
+
+    if first_id:
+        posts_obj = posts_obj.filter(id__lt=first_id)
+
+    posts_obj = posts_obj.distinct().order_by('-id')[:5]
+
+    data = []
+    for post in posts_obj:
+        data.append(post.get_summery_fields(request.user))
+
+    res = {'d': data}
+
+    return HttpResponse(json.dumps(res), 'application/json')
+
+
+def user_search(request):
+    check_user(request)
+
+    term = request.GET.get('t')
+    first_id = request.GET.get('f')
+
+    users_obj = Profile.objects.filter()
+
+    if term:
+        users_obj = users_obj.filter(username__icontains=term)
+
+    if first_id:
+        users_obj = users_obj.filter(id__lt=first_id)
+
+    users_obj = users_obj.distinct().order_by('-id')[:5]
+
+    data = []
+    for user in users_obj:
+        data.append(user.get_user_summery())
+
+    res = {'d': data}
+
+    return HttpResponse(json.dumps(res), 'application/json')
+
+
 def initial_post(request, **kwargs):
     data = get_auth_values(request)
     data.update(kwargs)
@@ -484,7 +640,7 @@ def append_csrf(request, response):
 
 def check_user(request):
     if request.user.is_authenticated():
-        request.user.last_act = datetime.datetime.utcnow()
+        # request.user.last_act = datetime.datetime.utcnow()
         request.user.save()
 
 
@@ -492,4 +648,3 @@ def app_info(request):
     data = {"v": settings.LAST_APP_VERSION, "s": settings.LAST_APP_SIZE, "c": settings.LAST_CHANGES,
             "l": settings.LAST_APP_LINK}
     return HttpResponse(json.dumps(data), 'application/json')
-

@@ -39,4 +39,17 @@ urlpatterns = patterns(
 
     url(r'^app_info/$', 'app_info', name='android_app_info'),
 
+    # FOR VERSION 1.1
+    url(r'^list/$', 'posts', name='android_posts1'),
+    url(r'^list/(?P<last_id>\d+)/$', 'last_posts', name='android_last_posts'),
+    url(r'^next_list/(?P<first_id>\d+)/$', 'next_posts', name='android_next_posts'),
+    url(r'^page/(?P<post_id>\d+)/$', 'page', name='android_page'),
+    url(r'^comment/(?P<post_id>\d+)/$', 'post_comment', name='android_post_comment'),
+
+    url(r'^user/$', 'user_posts', name='android_user'),
+    url(r'^users/$', 'users_page', name='android_users_page'),
+
+    url(r'^search/$', 'search_page', name='android_search_page'),
+    url(r'^user_search/$', 'user_search', name='android_user_search'),
+
 )

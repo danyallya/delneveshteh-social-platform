@@ -5,9 +5,10 @@ from colorful.fields import RGBColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models.query_utils import Q
+
 from django.utils.encoding import smart_text
 
-from account.models import Profile
 from comment.handler import CommentHandler
 from comment.models import Comment
 from utils.calverter import gregorian_to_jalali
@@ -33,7 +34,7 @@ class PostImage(models.Model):
 
 
 class PostLike(models.Model):
-    user = models.ForeignKey(Profile, verbose_name="کاربر")
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر")
     post = models.ForeignKey('post.Post', verbose_name="پست", related_name='likes')
     created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
 
@@ -57,7 +58,7 @@ class PostLike(models.Model):
 
 
 class PostRate(models.Model):
-    user = models.ForeignKey(Profile, verbose_name="کاربر")
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر")
     rate = models.IntegerField(verbose_name="امتیاز")
     created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
 
@@ -67,7 +68,7 @@ class PostRate(models.Model):
 
 
 class PostReport(models.Model):
-    user = models.ForeignKey(Profile, verbose_name="کاربر", null=True, blank=True)
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر", null=True, blank=True)
     post = models.ForeignKey('post.Post', verbose_name="پست")
     created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
 
@@ -97,13 +98,13 @@ class Post(BaseModel):
         (4, 'حدیث'),
     )
 
-    post_type = models.IntegerField(verbose_name="نوع", default=1)
+    post_type = models.IntegerField(verbose_name="نوع", default=1, choices=POST_TYPES)
 
     is_spec = models.BooleanField(verbose_name="داغ", default=False)
 
     version_code = models.IntegerField(verbose_name="ورژن نرم افزار", default=1)
 
-    android_version = models.CharField(verbose_name="ورژن اندروید", default="")
+    android_version = models.CharField(verbose_name="ورژن اندروید", default="", max_length=10, blank=True)
 
     class Meta:
         verbose_name = "پست"
@@ -165,7 +166,8 @@ class Post(BaseModel):
 
     def get_summery_fields(self, user):
         return {'d': self.id, 'n': self.creator.name if self.creator else "ناشناس", 'de': self.text, 'da': self.date,
-                "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user), 'co': self.color}
+                "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user), 'co': self.color,
+                'ty': self.get_post_type_display()}
 
     @staticmethod
     def get_summery_json(posts, user):
@@ -190,6 +192,49 @@ class Post(BaseModel):
             return "%s هفته قبل" % int(sec / (60 * 60 * 24 * 7))
         else:
             return pdate_if_date(self.created_on)
+
+    @staticmethod
+    def get_queryset_by_param(p):
+        posts = Post.objects.filter(active=True)
+        if p == 'hot':
+            posts = posts.filter(Q(is_spec=True) | Q(comments_count__gt=10) | Q(like_count__gt=10))
+        elif p == 'del':
+            posts = posts.filter(post_type=1)
+        elif p == 'talk':
+            posts = posts.filter(post_type=2)
+        elif p == 'monasebat':
+            posts = posts.filter(post_type=3)
+        elif p == 'hadis':
+            posts = posts.filter(post_type=4)
+        else:
+            posts = posts.none()
+        return posts
+
+    @staticmethod
+    def get_post_type_by_param(p):
+        if p == 'del':
+            return 1
+        elif p == 'talk':
+            return 2
+        elif p == 'monasebat':
+            return 3
+        elif p == 'hadis':
+            return 4
+        return None
+
+    def get_page_json(self, user):
+        data = self.get_summery_fields(user)
+
+        comments = Comment.objects.filter(
+            content_type=PostContentType,
+            object_pk=smart_text(self.id),
+            active=True
+        ).order_by('-id')
+        comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
+
+        data.update({'cj': comments_json})
+
+        return json.dumps(data)
 
 
 try:

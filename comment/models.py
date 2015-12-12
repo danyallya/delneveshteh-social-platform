@@ -3,12 +3,11 @@ import datetime
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from account.models import Profile
 from utils.templatetags.date_template_tags import pdate_if_date
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(Profile, verbose_name="کاربر", null=True)
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر", null=True)
     user_name = models.CharField("نام", max_length=50, null=True, blank=True)
     content_type = models.ForeignKey(ContentType,
                                      verbose_name='content type',
@@ -84,7 +83,7 @@ class Comment(models.Model):
 
 
 class LikeComment(models.Model):
-    user = models.ForeignKey(Profile, verbose_name="کاربر")
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر")
     created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)
     comment = models.ForeignKey(Comment, verbose_name="نظر")
 
@@ -112,7 +111,7 @@ class ReportComment(models.Model):
         (2, "موهن"),
         (3, "نامناسب")
     )
-    user = models.ForeignKey(Profile, verbose_name="کاربر", null=True, blank=True)
+    user = models.ForeignKey('account.Profile', verbose_name="کاربر", null=True, blank=True)
     comment = models.ForeignKey(Comment, verbose_name="نظر")
     state = models.IntegerField(verbose_name="نوع", default=1, choices=REPORT_STATES)
     created_on = models.DateTimeField(verbose_name="تاریخ ایجاد", auto_now_add=True)

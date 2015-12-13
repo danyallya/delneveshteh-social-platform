@@ -15,6 +15,12 @@ class Profile(AbstractUser):
 
     last_act = models.DateTimeField(verbose_name="آخرین حضور", null=True, blank=True, auto_now=True)
 
+    posts_count = models.IntegerField(verbose_name="تعداد پست ها", default=0)
+    comments_count = models.IntegerField(verbose_name="تعداد نظرها", default=0, null=True)
+
+    week_posts_count = models.IntegerField(verbose_name="تعداد پست های هفته", default=0)
+    month_posts_count = models.IntegerField(verbose_name="تعداد پست های ماه", default=0)
+
     def __str__(self):
         return self.name
 
@@ -27,6 +33,18 @@ class Profile(AbstractUser):
     # def age(self):
     #     if self.birth_date:
     #         return date.today().year - self.birth_date.year
+
+    def update(self):
+        today = datetime.date.today()
+
+        week = today - datetime.timedelta(days=7)
+        month = today - datetime.timedelta(days=30)
+
+        self.comments_count = self.comment_set.count()
+        self.posts_count = self.post_set.count()
+        self.week_posts_count = self.post_set.filter(created_on__gt=week).count()
+        self.month_posts_count = self.post_set.filter(created_on__gt=month).count()
+        self.save()
 
     @property
     def name(self):
@@ -72,11 +90,11 @@ class Profile(AbstractUser):
     @staticmethod
     def get_queryset_by_param(p):
         if p == 'week':
-            return Profile.objects.all()
+            return Profile.objects.order_by('-week_posts_count')[:20]
         elif p == 'month':
-            return Profile.objects.all()
+            return Profile.objects.order_by('-month_posts_count')[:20]
         elif p == 'all':
-            return Profile.objects.all()
+            return Profile.objects.order_by('-posts_count')[:20]
 
 
 class Suggestion(BaseModel):

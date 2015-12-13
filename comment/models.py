@@ -65,6 +65,7 @@ class Comment(models.Model):
     def update(self):
         self.like_count = self.likecomment_set.count()
         self.save()
+        self.user.update()
 
     def save(self, *args, **kwargs):
         super(Comment, self).save(args, kwargs)

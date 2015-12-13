@@ -125,6 +125,7 @@ class Post(BaseModel):
             active=True
         ).count()
         self.save()
+        self.creator.update()
 
     def get_detail_json(self, user):
         data = self.get_summery_fields(user)
@@ -245,7 +246,7 @@ class Post(BaseModel):
             content_type=PostContentType,
             object_pk=smart_text(self.id),
             active=True
-        ).order_by('-id')[:5]
+        ).order_by('-id')
         comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
 
         data.update({'cj': comments_json})

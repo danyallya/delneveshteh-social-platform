@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from django.conf import settings
@@ -16,7 +15,6 @@ from favorites.models import Favorite
 from post.models import Post, PostContentType, PostReport, PostLike
 from utils.calverter import gregorian_to_jalali
 from utils.messages import MessageServices
-from utils.templatetags.date_template_tags import pdate_if_date
 
 
 def logout(request):
@@ -123,7 +121,7 @@ def post_list(request):
     else:
         posts_obj = Post.objects.filter(active=True).order_by('-id')[:5]
 
-    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+    return HttpResponse(Post.get_old_summery_json(posts_obj, request.user), 'application/json')
 
 
 def last_post_list(request, last_id):
@@ -133,7 +131,7 @@ def last_post_list(request, last_id):
 
     posts_obj = Post.objects.filter(active=True, id__gt=last_id).order_by('-id')[:5]
 
-    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+    return HttpResponse(Post.get_old_summery_json(posts_obj, request.user), 'application/json')
 
 
 def next_post_list(request, first_id):
@@ -143,7 +141,7 @@ def next_post_list(request, first_id):
 
     posts_obj = Post.objects.filter(active=True, id__lt=first_id).order_by('-id')[:5]
 
-    return HttpResponse(Post.get_summery_json(posts_obj, request.user), 'application/json')
+    return HttpResponse(Post.get_old_summery_json(posts_obj, request.user), 'application/json')
 
 
 def user_post_list(request):
@@ -224,9 +222,25 @@ def send_post(request):
             )
 
             p = request.POST.get('p')
+            v = request.POST.get('v')
+            a = request.POST.get('a')
 
             if p:
                 post.post_type = Post.get_post_type_by_param(p)
+
+            if v:
+                try:
+                    v = int(v)
+                    post.version_code = v
+                except:
+                    pass
+
+            if a:
+                try:
+                    a = int(a)
+                    post.android_version = a
+                except:
+                    pass
 
             post.save()
 
@@ -502,6 +516,24 @@ def page(request, post_id):
     post = get_object_or_404(Post, id=post_id, active=True)
 
     return HttpResponse(post.get_page_json(request.user), 'application/json')
+
+
+def more_comment(request, post_id):
+    check_user(request)
+
+    first_id = request.GET.get('f')
+
+    comments = Comment.objects.filter(
+        content_type=PostContentType,
+        object_pk=smart_text(post_id),
+        active=True,
+        id__gt=first_id
+    ).order_by('-id')[:5]
+
+    comments_arr = CommentHandler(comments, user_id=request.user.id).render_comments_json()
+    data = {'c': comments_arr}
+
+    return HttpResponse(json.dumps(data), 'application/json')
 
 
 @login_required

@@ -44,6 +44,7 @@ urlpatterns = patterns(
     url(r'^list/(?P<last_id>\d+)/$', 'last_posts', name='android_last_posts'),
     url(r'^next_list/(?P<first_id>\d+)/$', 'next_posts', name='android_next_posts'),
     url(r'^page/(?P<post_id>\d+)/$', 'page', name='android_page'),
+    url(r'^more_comment/(?P<post_id>\d+)/$', 'more_comment', name='android_more_comment'),
     url(r'^comment/(?P<post_id>\d+)/$', 'post_comment', name='android_post_comment'),
 
     url(r'^user/$', 'user_posts', name='android_user'),

@@ -104,7 +104,7 @@ class Post(BaseModel):
 
     version_code = models.IntegerField(verbose_name="ورژن نرم افزار", default=1)
 
-    android_version = models.CharField(verbose_name="ورژن اندروید", default="", max_length=10, blank=True)
+    android_version = models.IntegerField(verbose_name="ورژن اندروید", default="", blank=True)
 
     class Meta:
         verbose_name = "پست"
@@ -169,6 +169,22 @@ class Post(BaseModel):
                 "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user), 'co': self.color,
                 'ty': self.get_post_type_display()}
 
+    def get_old_summery_fields(self, user):
+        text = self.text
+        if self.version_code > 1:
+            text += " <br/> این پست در نسخه جدید گذاشته شده است. لطفا نرم افزار خود را آپدیت نمایید."
+
+        return {'d': self.id, 'n': self.creator.name if self.creator else "ناشناس", 'de': text, 'da': self.date,
+                "lc": self.like_count, 'cc': self.comments_count, 'f': self.is_fav(user), 'co': self.color,
+                'ty': self.get_post_type_display()}
+
+    @staticmethod
+    def get_old_summery_json(posts, user):
+        data = []
+        for post in posts:
+            data.append(post.get_old_summery_fields(user))
+        return json.dumps(data)
+
     @staticmethod
     def get_summery_json(posts, user):
         data = []
@@ -229,7 +245,7 @@ class Post(BaseModel):
             content_type=PostContentType,
             object_pk=smart_text(self.id),
             active=True
-        ).order_by('-id')
+        ).order_by('-id')[:5]
         comments_json = CommentHandler(comments, user_id=user.id if user else None).render_comments_json()
 
         data.update({'cj': comments_json})

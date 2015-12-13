@@ -104,7 +104,7 @@ class Post(BaseModel):
 
     version_code = models.IntegerField(verbose_name="ورژن نرم افزار", default=1)
 
-    android_version = models.IntegerField(verbose_name="ورژن اندروید", default="", blank=True)
+    android_version = models.IntegerField(verbose_name="ورژن اندروید", default=1)
 
     class Meta:
         verbose_name = "پست"

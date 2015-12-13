@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='post',
             name='android_version',
-            field=models.IntegerField(default='', blank=True, verbose_name='ورژن اندروید'),
+            field=models.IntegerField(verbose_name='ورژن اندروید', default=1),
         ),
         migrations.AlterField(
             model_name='post',
             name='post_type',
-            field=models.IntegerField(default=1, choices=[(1, 'دلنوشته'), (2, 'بحث'), (3, 'مناسبت'), (4, 'حدیث')], verbose_name='نوع'),
+            field=models.IntegerField(verbose_name='نوع', choices=[(1, 'دلنوشته'), (2, 'بحث'), (3, 'مناسبت'), (4, 'حدیث')], default=1),
         ),
     ]

@@ -41,9 +41,9 @@ class Profile(AbstractUser):
         month = today - datetime.timedelta(days=30)
 
         self.comments_count = self.comment_set.count()
-        self.posts_count = self.post_set.count()
-        self.week_posts_count = self.post_set.filter(created_on__gt=week).count()
-        self.month_posts_count = self.post_set.filter(created_on__gt=month).count()
+        self.posts_count = self.post_set.filter(active=True).count()
+        self.week_posts_count = self.post_set.filter(active=True, created_on__gt=week).count()
+        self.month_posts_count = self.post_set.filter(active=True, created_on__gt=month).count()
         self.save()
 
     @property

@@ -593,6 +593,21 @@ def users_page(request):
     return HttpResponse(json.dumps(res), 'application/json')
 
 
+def fav_list_page(request):
+    check_user(request)
+    p = request.GET.get('p')
+
+    posts_obj = Post.get_queryset_by_param(p)
+
+    res = []
+
+    for post in posts_obj:
+        res.append(post.get_summery_fields())
+
+    return HttpResponse(json.dumps(res), 'application/json')
+
+
+
 def search_page(request):
     check_user(request)
 

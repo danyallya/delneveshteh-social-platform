@@ -253,6 +253,17 @@ class Post(BaseModel):
 
         return json.dumps(data)
 
+    @staticmethod
+    def get_queryset_by_param(p):
+        if p == 'week':
+            week = datetime.date.today() - datetime.timedelta(days=7)
+            return Post.objects.filter(active=True, created_on__gt=week).order_by('-like_count')[:20]
+        elif p == 'month':
+            month = datetime.date.today() - datetime.timedelta(days=30)
+            return Post.objects.filter(active=True, created_on__gt=month).order_by('-like_count')[:20]
+        elif p == 'all':
+            return Post.objects.filter(active=True).order_by('-like_count')[:20]
+
 
 try:
     PostContentType = ContentType.objects.get_for_model(Post)

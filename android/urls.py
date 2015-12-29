@@ -53,4 +53,9 @@ urlpatterns = patterns(
     url(r'^search/$', 'search_page', name='android_search_page'),
     url(r'^user_search/$', 'user_search', name='android_user_search'),
 
+
+    # FOR VERSION 1.2
+    url(r'^fav_list/$', 'fav_list_page', name='android_fav_list'),
+
+
 )

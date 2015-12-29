@@ -602,7 +602,7 @@ def fav_list_page(request):
     res = []
 
     for post in posts_obj:
-        res.append(post.get_summery_fields())
+        res.append(post.get_summery_fields(request.user))
 
     return HttpResponse(json.dumps(res), 'application/json')
 

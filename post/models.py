@@ -254,7 +254,7 @@ class Post(BaseModel):
         return json.dumps(data)
 
     @staticmethod
-    def get_queryset_by_param(p):
+    def get_queryset_by_param_fav(p):
         if p == 'week':
             week = datetime.date.today() - datetime.timedelta(days=7)
             return Post.objects.filter(active=True, created_on__gt=week).order_by('-like_count')[:20]

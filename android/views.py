@@ -597,7 +597,7 @@ def fav_list_page(request):
     check_user(request)
     p = request.GET.get('p')
 
-    posts_obj = Post.get_queryset_by_param(p)
+    posts_obj = Post.get_queryset_by_param_fav(p)
 
     res = []
 

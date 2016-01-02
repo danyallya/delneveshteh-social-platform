@@ -31,11 +31,12 @@ class SignUpFormNoCaptcha(BaseForm):
             self.errors['username'] = self.error_class([u'نام کاربری تکراری می باشد.'])
         except Profile.DoesNotExist:
             pass
-        try:
-            Profile.objects.get(email=email)
-            self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])
-        except Profile.DoesNotExist:
-            pass
+        if email:
+            try:
+                Profile.objects.get(email=email)
+                self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])
+            except Profile.DoesNotExist:
+                pass
         return cd
 
     def save(self, commit=True):
@@ -95,11 +96,13 @@ class ProfileForm(BaseForm):
         re_password = cd.get('re_password')
         if (password or re_password) and password != re_password:
             self.errors['password'] = self.error_class([u'رمز عبور با تکرار آن مطابقت ندارد.'])
-        try:
-            Profile.objects.exclude(id=self.instance.user.id).get(email=email)
-            self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])
-        except Profile.DoesNotExist:
-            pass
+
+        if email:
+            try:
+                Profile.objects.exclude(id=self.instance.user.id).get(email=email)
+                self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])
+            except Profile.DoesNotExist:
+                pass
         try:
             Profile.objects.exclude(id=self.instance.user.id).get(username=username)
             self.errors['username'] = self.error_class([u'نام کاربری تکراری می باشد.'])

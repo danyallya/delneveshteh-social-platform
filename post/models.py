@@ -214,7 +214,7 @@ class Post(BaseModel):
     def get_queryset_by_param(p):
         posts = Post.objects.filter(active=True)
         if p == 'hot':
-            posts = posts.filter(Q(is_spec=True) | Q(comments_count__gt=10) | Q(like_count__gt=10))
+            posts = posts.filter(Q(is_spec=True) | Q(comments_count__gt=3) | Q(like_count__gt=3))
         elif p == 'del':
             posts = posts.filter(post_type=1)
         elif p == 'talk':

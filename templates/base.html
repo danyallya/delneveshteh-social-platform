@@ -3,22 +3,22 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        فانوس
+        دلنوشته
     </title>
     <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
     {#    <link rel="shortcut icon" href="/static/favicon.ico">#}
 
     {% block CSS %}
-        <link rel="stylesheet" type="text/css" href="/static/style.css"/>
-        <link rel="stylesheet" type="text/css" href="/static/semantic/semantic.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/static/base.css"/>
+
     {% endblock %}
 
     {% block JS %}
-        <script type="text/javascript" src="/static/jquery/jquery-1.11.2.min.js"></script>
+
         <script>
             var django = {jQuery: jQuery};
         </script>
-        <script type="text/javascript" src="/static/semantic/semantic.min.js"></script>
+
     {% endblock %}
 
 
@@ -26,13 +26,53 @@
 
 <body class="main_container">
 
-{% include 'messages.html' %}
+<div id="header" class="mrg-center">
+    <div class="mrg-center main-width table">
+        <div class="right logo"></div>
+        <div class="right search">
+            <input class="right" id="search-text" placeholder="جستجو"
+                   value="">
 
-<article id="content">
-    {% block content %}
-    {% endblock %}
-</article>
+            <div class="right search-btn">
+                <img src="/static/images/search-btn.png" width="28" height="26">
+            </div>
+        </div>
+        <div class="left items">
+            <div class="left item">
+                <div class="item-text">مناسبات</div>
+            </div>
+            <div class="left item">
+                <div class="item-text">حدیث</div>
 
+            </div>
+            <div class="left item">
+                <div class="item-text">بحث</div>
+
+            </div>
+            <div class="left item">
+                <div class="item-text">دلنوشته</div>
+
+            </div>
+            <div class="left item">
+                <div class="item-text no-border">بحث</div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% block content %}
+
+
+
+{% endblock %}
+<footer>
+    <div class="copywrite mrg-center main-width">
+      کلیه حقوق این سایت به
+        شرکت پردازش رایانه کرمان تعلق دارد.
+    </div>
+</footer>
 </body>
 
 </html>

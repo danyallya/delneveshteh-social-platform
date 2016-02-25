@@ -23,6 +23,10 @@ urlpatterns = [
     url(r'^account/', include('account.urls')),
     url(r'^android/', include('android.urls')),
 
+    url(r'^base/$', 'post.views.base', name='base'),
+    url(r'^home/$', 'post.views.home', name='home'),
+    url(r'^post/$', 'post.views.post', name='post'),
+
 ]
 
 urlpatterns += [

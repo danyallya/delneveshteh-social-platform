@@ -3,219 +3,59 @@
 {% block CSS %}
     {{ block.super }}
 
-
-
 {% endblock %}
 
 {% block content %}
 
     <div class="main-width mrg-center main">
 
-
         <div class="del-item radius mrg-center">
             <div class="header">
                 <div class="right username">
-                    محمد صالح
+                    {{ post.creator.name }}
                 </div>
                 <div class="left time">
-                    10 ساعت پیش
+                    {{ post.date }}
                 </div>
             </div>
             <div class="main-text mrg-center">
-                یمسشایمتدشمدسیمن شندشسزمدشس مشسش مش سمتسش م تتمسیمسشایمتدشمدسیمن شندشسزمدشس
-                مشسش مش سمتسش م تتمسشمیمتشس تیذمی ش یتن سی
-                متشیاشنتسذیشدیسش نتذیسش ینشسیش سینش یناشمیمتشس تیذمی ش یتن سی
-                متشیاشنتسذیشدیسش نتذیسش ینیمسشایمتدشمدسیمن شندشسزمدشس مشسش مش سمتسش
-                م تتمسشمیمتشس تیذمی ش یتن سییمسشایمتدشم...
-
+                {{ post.text }}
             </div>
             <div class="bottom-box mrg-center">
-                <div class="right comment-btn"></div>
-                <div class="right like-btn"></div>
+                <div class="right comment-btn">{{ post.comments_count }}</div>
+                <div class="right like-btn">{{ post.like_count }}</div>
                 <div class="left report-btn"></div>
             </div>
         </div>
+
         <div class="comment-box">
             <div class="header">
                 نظرات
-
             </div>
             <div class="items-box">
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
+
+                {% for comment in comments %}
+                    <div class="com-item table">
+                        <div class="right com-info">
+                            <div class="com-name">
+                                {{ comment.user_name }}
+                            </div>
+                            <div class="com-time">
+                                {{ comment.date }}
+                            </div>
                         </div>
-                        <div class="com-time">
-                            10 ساعت قبل
+                        <div class="right com-text">
+                            {{ comment.text|linebreaksbr }}
                         </div>
+                        <div class="left com-like">{{ comment.like_count }}</div>
                     </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی
-                        شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
+                {% endfor %}
+
+{#                <div class="more-com">#}
+{#                    دیدن بیشتر ...#}
+{#                </div>#}
 
 
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی
-                        شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-
-
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی
-                        شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-
-
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-                        نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی
-                        شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش نمتی شمذیسشم ذیمشسذ ش
-
-
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="com-item table">
-                    <div class="right com-info">
-                        <div class="com-name">
-                            مححمد صالح
-                        </div>
-                        <div class="com-time">
-                            10 ساعت قبل
-                        </div>
-                    </div>
-                    <div class="right com-text">
-                        منسینشتذیمشسی سشیدشدی مشذیم سشمیمش دیشمدیمسشد مد
-                        یسد مشیسد متنسشذی سشذیمت ذشش سذدمتذشسی مش
-                        متس یمشذی سمتنشذنی ذی ذ
-                        نمتی شمذیسشم ذیمشسذ ش
-                        ندمس یمشدیم دشیمد شسمدی
-                        دکنی مسشدشیس مدمدی سش
-                    </div>
-                    <div class="left com-like"></div>
-                </div>
-                <div class="more-com">
-دیدن بیشتر ...
-                </div>
             </div>
         </div>
 

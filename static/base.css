@@ -247,6 +247,10 @@ body {
     background-position: 96px 56px;
 }
 
+.like-btn.active {
+    background-position: 96px 56px;
+}
+
 .comment-btn {
     background-image: url("/static/images/bottom-box-img.png");
     width: 32px;

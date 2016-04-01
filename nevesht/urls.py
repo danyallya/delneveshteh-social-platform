@@ -25,7 +25,8 @@ urlpatterns = [
 
     url(r'^base/$', 'post.views.base', name='base'),
     url(r'^$', 'post.views.home', name='home'),
-    url(r'^post/(?P<post_id>\d+)/$', 'post.views.post', name='post_page'),
+    url(r'^post/(?P<post_id>\d+)/$', 'post.views.post_page', name='post_page'),
+    url(r'^like_ajax/$', 'post.views.like_ajax', name='like_ajax'),
 
 ]
 

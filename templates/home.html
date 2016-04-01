@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
+{% load post_template_tags %}
 
 {% block CSS %}
     {{ block.super }}
-
-
-
 {% endblock %}
 
 {% block content %}
@@ -25,11 +23,13 @@
                     {{ post.text }}
                 </div>
                 <div class="bottom-box mrg-center">
+                    <input type="hidden" class="post-id" name="post-id" value="{{ post.id }}">
+
                     <a class="right comment-btn" href="{% url 'post_page' post.id %}">
                         {{ post.comments_count }}
                     </a>
 
-                    <div class="right like-btn">{{ post.like_count }}</div>
+                    <div class="right like-btn{% if post|is_like:user %} active{% endif %}">{{ post.like_count }}</div>
                     <div class="left report-btn"></div>
                 </div>
             </div>

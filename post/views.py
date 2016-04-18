@@ -1,11 +1,10 @@
 import json
-
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.encoding import smart_text
-
 from android.views import check_user
 from comment.models import Comment
+from comment.views import send_comment_handler_view
 from post.models import Post, PostContentType, PostLike
 
 
@@ -48,3 +47,7 @@ def like_ajax(request):
 
     data = {'s': state, 'lc': post.like_count}
     return HttpResponse(json.dumps(data), 'application/json')
+
+
+def send_comment(request):
+    return send_comment_handler_view(request, PostContentType)

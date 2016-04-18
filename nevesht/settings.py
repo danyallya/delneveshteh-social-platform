@@ -15,7 +15,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = '0)ts6vvykesazrjga*-!(08m=pn9i@1yz=09rjd@yao+du=t_z'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -80,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nevesht.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -90,7 +87,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -105,7 +101,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -118,10 +113,6 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "templates"),
-)
-
 AUTH_USER_MODEL = 'account.Profile'
 
 # captcha
@@ -131,7 +122,6 @@ CAPTCHA_FONT_SIZE = 30
 CAPTCHA_TIMEOUT = 80  # minutes
 CAPTCHA_BACKGROUND_COLOR = '#000000'
 CAPTCHA_FOREGROUND_COLOR = '#ffffff'
-
 
 # GRAPPELLI SETTINGS
 GRAPPELLI_ADMIN_TITLE = u"پرتال مدیریتی نوشت"

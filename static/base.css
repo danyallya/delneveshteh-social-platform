@@ -75,6 +75,28 @@ body {
     display: table
 }
 
+.black {
+    color: black;
+}
+
+.gray {
+    color: #6c6c6c;
+}
+
+.red {
+    color: #FF4649;
+}
+
+a {
+    text-decoration: none;
+    color: #38a5f3;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #00bff3;
+}
+
 /*header*/
 #header {
     width: 100%;
@@ -434,7 +456,7 @@ footer {
 }
 
 .comment-box .items-box .com-item .com-like:hover {
- color: #00bff3;
+    color: #00bff3;
     background-position: 96px 108px;
 }
 
@@ -510,7 +532,13 @@ footer {
     font-size: 13px;
 }
 
-.pop-box #login-user {
+.account-section .signup.error {
+    margin-right: 55px;
+    margin-top: -3px;
+    font-size: 15px;
+}
+
+.pop-box #login-user, .pop-box input[type=text], .pop-box input[type=password] {
 
     font-family: sans, "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     color: black;
@@ -582,4 +610,14 @@ footer {
 
 .hidden {
     display: none;
+}
+
+/* alertify */
+.alertify, .alertify-log {
+    font-family: "sans", tahoma, sans-serif !important;
+}
+
+.alertify-log-success {
+    background: #00bff3 !important;
+    background: rgba(0, 191, 243, 0.91) !important;
 }

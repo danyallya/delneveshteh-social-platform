@@ -9,17 +9,25 @@
     {#    <link rel="shortcut icon" href="/static/favicon.ico">#}
 
     {% block CSS %}
+        <link rel="stylesheet" type="text/css" href="/static/alertify/alertify.core.css">
+        <link rel="stylesheet" type="text/css" href="/static/alertify/alertify.default.css">
         <link rel="stylesheet" type="text/css" href="/static/base.css"/>
 
     {% endblock %}
 
     {% block JS %}
         <script type="text/javascript" src="/static/jquery/jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="/static/alertify/alertify.min.js"></script>
 
         <script>
             var django = {jQuery: jQuery};
             var is_auth = {{ user.is_authenticated|yesno:"true,false" }};
             var likeUrl = '{% url "like_ajax" %}';
+            var sendCommentUrl = '{% url 'send_comment' %}';
+            var checkUrl = '{% url "check" %}';
+            var checkSignupUrl = '{% url "check_signup" %}';
+            var forgetUrl = '{% url "forget" %}';
+            {#            var searchUrl = '{% url "search_sug" %}';#}
         </script>
 
         <script type="text/javascript" src="/static/base.js?v={{ SITE_VERSION }}"></script>
@@ -33,7 +41,9 @@
 
 <div id="header" class="mrg-center">
     <div class="mrg-center main-width table">
-        <div class="right logo"></div>
+
+        <a class="right logo" href="{% url 'home' %}"></a>
+
         <div class="right search">
             <input class="right" id="search-text" placeholder="جستجو"
                    value="">
@@ -59,7 +69,7 @@
 
             </div>
             <div class="left item">
-                <div class="item-text no-border">بحث</div>
+                <div class="item-text no-border">داغ</div>
 
             </div>
         </div>
@@ -72,62 +82,83 @@
 
 
 {% endblock %}
+
 <footer>
     <div class="copywrite mrg-center main-width">
         کلیه حقوق این سایت به
         شرکت پردازش رایانه کرمان تعلق دارد.
     </div>
 </footer>
+
 <section id="login-box" class="account-section hidden">
     <div class="radius mrg-center center pop-box">
 
         <div class="header">
-            وارد دلنوشته شوید
+            به دلنوشته وارد شوید
         </div>
-        <form action="" method="post">
+
+        <form action="{% url "login" %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <div class="message error red">
+            </div>
 
             <div class="login-text right"> نام کاربری</div>
-            <input id="login-user" name="username" class="right input " placeholder="  " dir="ltr"
+            <input id="login-username" name="username" class="right input " placeholder="  " dir="ltr"
                    type="text">
 
             <div class="pass-text right"> رمز عبور</div>
             <input id="login-pass" name="password" class="center input" placeholder=" " dir="ltr"
                    type="password">
 
-
             <input value="ورود" class="submit right" type="submit">
-            <input value="ثبت نام سریع" class="submit right" type="submit">
+
+            <div class="go-signup submit right">
+                ثبت نام سریع
+            </div>
 
         </form>
     </div>
 </section>
+
 <section id="signup-box" class="account-section hidden">
     <div class="radius mrg-center center pop-box">
 
         <div class="header">
-            ثبت نام
+            عضو دلنوشته شوید
         </div>
-        <form action="" method="post">
+
+        <form action="{% url "signup" %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
 
             <div class="login-text right"> نام کاربری</div>
-            <input id="login-user" name="username" class="right input " placeholder="  " dir="ltr"
+            <input id="signup-name" name="username" class="right input " placeholder="" dir="ltr"
                    type="text">
 
-            <div class="pass-text right"> ایمیل</div>
-            <input id="login-pass" name="email" class="center input" placeholder=" " dir="ltr"
-                   type="password">
+            <div class="signup error red">
+
+            </div>
+
+            {#            <div class="pass-text right"> ایمیل</div>#}
+            {#            <input id="login-pass" name="email" class="center input" placeholder=" " dir="ltr"#}
+            {#                   type="password">#}
 
             <div class="pass-text right"> رمز عبور</div>
-            <input id="login-pass" name="password" class="center input" placeholder=" " dir="ltr"
+            <input id="signup-pass" name="password" class="center input" placeholder="" dir="ltr"
                    type="password">
 
+            <div class="signup error red">
+
+            </div>
 
             <input value="ثبت نام" class="submit " style="margin-right: 0;" type="submit">
-
 
         </form>
     </div>
 </section>
+
 <section id="report-box" class="account-section hidden">
     <div class="radius mrg-center center pop-box">
 
@@ -143,6 +174,9 @@
         </form>
     </div>
 </section>
+
+{% include 'messages_alertify.html' %}
+
 </body>
 
 </html>

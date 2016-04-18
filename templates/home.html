@@ -20,7 +20,18 @@
                     </div>
                 </div>
                 <div class="main-text mrg-center">
-                    {{ post.text }}
+                    {% if post.text|length > 500 %}
+                        {{ post.text|max_str:500 }}
+
+                        <a href="{% url 'post_page' post.id %}">
+                            {
+                            ادامه
+                            }
+                        </a>
+
+                    {% else %}
+                        {{ post.text }}
+                    {% endif %}
                 </div>
                 <div class="bottom-box mrg-center">
                     <input type="hidden" class="post-id" name="post-id" value="{{ post.id }}">
@@ -29,7 +40,7 @@
                         {{ post.comments_count }}
                     </a>
 
-                    <div class="right like-btn{% if post|is_like:user %} active{% endif %}">{{ post.like_count }}</div>
+                    <div class="right like-btn login-need{% if post|is_like:user %} active{% endif %}">{{ post.like_count }}</div>
                     <div class="left report-btn"></div>
                 </div>
             </div>

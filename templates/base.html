@@ -2,6 +2,10 @@
 <html dir="ltr" lang="en-US">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/static/images/post.png">
+    <meta property="og:image" content="/static/images/post.png">
+
+
     <title>
         دلنوشته
     </title>
@@ -45,26 +49,6 @@
         <a class="right logo" href="{% url 'home' %}"></a>
 
 
-        {% if user.is_authenticated %}
-            <span class="right">{{ user }}</span>
-            <a class="right signin-btn" href="{% url 'user_page' user.username %}">
-                صفحه من
-            </a>
-            <a class="right signup-btn" href="{% url 'logout' %}?next={{ request.path }}">
-                خروج
-            </a>
-
-        {% else %}
-            <div class="right signin-btn login">
-                ورود
-
-            </div>
-            <div class="right signup-btn signup">
-                ثبت نام
-
-            </div>
-        {% endif %}
-
         <form class="left search" method="get" action="{% url 'search' %}">
             <input class="right" id="search-text" placeholder="جستجو..." name="q"
                    value="{{ q|default:'' }}">
@@ -95,7 +79,27 @@
 
             </a>
         </div>
+        {% if user.is_authenticated %}
+            <span class="user-text right">{{ user }}</span>
 
+            <a class="left signup-btn" href="{% url 'logout' %}?next={{ request.path }}">
+                خروج
+            </a>
+            <a class="left signin-btn" href="{% url 'user_page' user.username %}">
+                صفحه من
+            </a>
+
+        {% else %}
+
+            <div class="left signup-btn signup">
+                ثبت نام
+
+            </div>
+            <div class="left signin-btn login">
+                ورود
+
+            </div>
+        {% endif %}
     </div>
 </div>
 
@@ -118,7 +122,11 @@
 <footer>
     <div class="copywrite mrg-center main-width">
         کلیه حقوق این سایت به
-        شرکت پردازش رایانه کرمان تعلق دارد.
+<a href="http://prkgroup.ir/">
+            گروه پردازش رایانه کرمان
+
+</a>
+        تعلق دارد.
     </div>
 </footer>
 

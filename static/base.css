@@ -255,7 +255,7 @@ a:hover {
 }
 
 .del-item .main-text {
-    border-right: 1px solid #7d7a7a;
+    border-right: 1px solid #D2D2D2;
     color: #7d7a7a;
     font-size: 14px;
     box-sizing: border-box;
@@ -356,13 +356,15 @@ footer {
     text-align: center;
     padding-top: 9px;
     box-sizing: border-box;
-    height: 40px;
+    height: 35px;
+    font-size: 12px;
     /* bottom: 0; */
 }
 
 /*comment*/
 .write-com {
     width: 844px;
+    box-shadow: 0px 0px 8px -4px;
 
     margin-top: 25px;
     display: table;
@@ -375,7 +377,7 @@ footer {
     border: none;
     resize: none;
     width: 653px;
-    height: 45px;
+    height: 150px;
     background-color: #efefef;
     margin-right: 15px;
     margin-top: 15px;
@@ -383,14 +385,8 @@ footer {
     padding: 10px;
     box-sizing: border-box;
     outline: 0;
-    -webkit-transition: height 0.5s;
-    -moz-transition: height 0.5s;
-    transition: height 0.5s;
-    font-size: 13px;
-}
 
-.share-input:hover {
-    height: 150px;
+    font-size: 13px;
 }
 
 .write-btn {
@@ -440,7 +436,7 @@ footer {
     width: 100%;
     box-sizing: border-box;
     padding-top: 10px;
-    border-bottom: 1px solid #7d7a7a;
+    border-bottom: 1px solid #D2D2D2;
 
 }
 
@@ -467,7 +463,7 @@ footer {
 }
 
 .comment-box .items-box .com-item .com-text {
-    border-right: 1px solid #7d7a7a;
+    border-right: 1px solid #D2D2D2;
     color: #7d7a7a;
     font-size: 14px;
     box-sizing: border-box;
@@ -673,6 +669,7 @@ footer {
     box-sizing: border-box;
     border-radius: 3px;
     margin-top: 20px;
+    overflow: hidden;
 }
 
 .left-menu .box .item {
@@ -686,11 +683,19 @@ footer {
     display: block;
 }
 
+.left-menu .box .item:hover {
+    background-color: rgba(0, 191, 243, 0.72);
+    color: white;
+}
+
 .left-menu .box .header {
     background: #f8f8f8;
     color: #14a1c8;
     padding: 16px 20px;
     border-bottom: 1px solid #eaeaea;
+    display: table;
+    width: 100%;
+    box-sizing: border-box;
 
 }
 
@@ -721,8 +726,20 @@ footer {
     margin-top: 27px;
     box-sizing: border-box;
     padding-top: 2px;
-    margin-right: 85px;
+    /*margin-right: 85px;*/
     box-shadow: 1px 0px 5px -3px black;
+    margin-left: -3px;
+}
+
+.user-text {
+    font-size: 15px;
+    color: white;
+    margin-top: 30px;
+    margin-right: -3px;
+    height: 30px;
+    overflow: hidden;
+    width: 155px;
+    text-align: center;
 }
 
 .signup-btn {
@@ -732,11 +749,12 @@ footer {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 191, 243);
     text-align: center;
+    margin-left: 20px;
     cursor: pointer;
     margin-top: 27px;
     box-sizing: border-box;
     padding-top: 2px;
-    margin-right: -3px;
+
     box-shadow: 1px 0px 5px -3px black;
 }
 
@@ -745,5 +763,129 @@ footer {
     background-color: rgb(0, 191, 243);
     color: white;
     border: 1px solid rgb(234, 234, 234);
+
+}
+
+.user-items {
+    display: table;
+    clear: both;
+}
+
+.user-items .user-item {
+    /*border: 1px solid rgb(234, 234, 234);*/
+    color: rgb(20, 161, 206);
+    border-radius: 5px;
+    margin-right: 35px;
+    margin-left: 13px;
+    margin-top: 13px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    min-width: 20px;
+    text-align: center;
+    min-height: 30px;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 4px;
+    cursor: default;
+}
+
+.user-items .user-item:hover {
+    background-color: rgb(69, 161, 200);
+    color: #FFFFFF;
+}
+
+.profile-img {
+    background-image: url("/static/images/profile.png");
+    width: 32px;
+    height: 33px;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    margin-left: 17px;
+}
+
+.item-img {
+    height: 34px;
+    width: 26px;
+    background-size: 26px;
+    background-repeat: no-repeat;
+    margin-top: 13px;
+    margin-left: 39px;
+}
+
+.date-img {
+    background-image: url("/static/images/add-time.png");
+
+}
+
+.post-img {
+    background-image: url("/static/images/post.png");
+
+}
+
+.postl-img {
+    background-size: 118px auto;
+    background-position: 79px 46px !important;
+    width: 30px;
+    height: 30px;
+    margin-left: 40px;
+    margin-top: 13px;
+    cursor: default;
+
+}
+
+.com-img {
+    background-size: 118px auto;
+    background-position: 38px 96px !important;
+    width: 30px;
+    height: 30px;
+    margin-left: 40px;
+    margin-top: 6px;
+    cursor: default;
+
+}
+
+.dl-android, .dl-android .header {
+    background-color: #00bff3 !important;
+    color: white !important;
+
+}
+
+.dl-android .header {
+    text-align: center;
+    /*font-weight: bold;*/
+    font-size: 20px;
+    padding: 9px!important;
+}
+
+.direct-dl {
+    color: white !important;
+    width: 124px;
+    height: 36px;
+    cursor: pointer;
+    padding-top: 4px;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    margin: 10px;
+    font-size: 14px;
+    border: 1px solid white;
+    text-align: center;
+
+    border-radius: 2px;
+}
+
+.bazzar-dl {
+    background-image: url("/static/images/dl-bazzar.png");
+    width: 124px;
+    height: 36px;
+    margin-right: 29px;
+    padding: 16px;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-top: 11px;
+}
+
+.time-img {
+    background-image: url("/static/images/time.png");
 
 }

@@ -7,151 +7,15 @@
 
 {% block content %}
 
-    <div class="main-width table mrg-center main">
-        <div class="right-main right">
-            {% for post in posts %}
-                <div class="del-item radius mrg-center">
-                    <div class="header">
-                        <div class="right username">
-                            {{ post.creator.name }}
-                        </div>
-                        <div class="left time">
-                            {{ post.date }}
-                        </div>
-                    </div>
-                    <div class="main-text mrg-center">
-                        {% if post.text|length > 500 %}
-                            {{ post.text|max_str:500 }}
-
-                            <a href="{% url 'post_page' post.id %}">
-                                {
-                                ادامه
-                                }
-                            </a>
-
-                        {% else %}
-                            {{ post.text }}
-                        {% endif %}
-                    </div>
-                    <div class="bottom-box mrg-center">
-                        <input type="hidden" class="post-id" name="post-id" value="{{ post.id }}">
-
-                        <a class="right comment-btn" href="{% url 'post_page' post.id %}">
-                            {{ post.comments_count }}
-                        </a>
-
-                        <div class="right like-btn login-need{% if post|is_like:user %} active{% endif %}">{{ post.like_count }}</div>
-                        <div class="left report-btn"></div>
-                    </div>
-                </div>
-            {% endfor %}
+    {% if desc %}
+        <div class="del-header radius mrg-center">
+            {{ desc }}
         </div>
-        <div class="left-menu left">
-            <div class="box ">
-                <div class="header">
-                    لیست
-                </div>
-                <div class="item">
-                    پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                    عله بیسار
-                </div>
-                <div class="item">
-                    پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                    عله بیسار
-                </div>
-                <div class="item">
-                    پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                    عله بیسار
-                </div>
-                <div class="item">
-                    پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                    عله بیسار
-                </div>
-            </div>
+    {% endif %}
 
-            <div class="box ">
-                <div class="header">
-                    لیست لایک
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;">
-                        پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                        عله بیسار
-                    </div>
-                    <div class="left like-btn login-need active" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;">
-                        پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                        عله بیسار
-                    </div>
-                    <div class="left like-btn login-need active" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;">
-                        پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                        عله بیسار
-                    </div>
-                    <div class="left like-btn login-need active" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;">
-                        پست شماره یک در مورد فلان پست شماره یک در مورد فلان عله بیسار
-                        عله بیسار
-                    </div>
-                    <div class="left like-btn login-need active" style="margin-top: -6px!important;">1</div>
-                </div>
-
-            </div>
-            <div class="box ">
-                <div class="header">
-                    لیست لایک
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;color: rgb(29, 183, 209);cursor: pointer;">
-                        دانیال یاشیخ اکبری
-                    </div>
-                    <div class="left post-btn" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;color: rgb(29, 183, 209);cursor: pointer;">
-                        دانیال یاشیخ اکبری
-                    </div>
-                    <div class="left post-btn" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;color: rgb(29, 183, 209);cursor: pointer;">
-                        دانیال یاشیخ اکبری
-                    </div>
-                    <div class="left post-btn" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;color: rgb(29, 183, 209);cursor: pointer;">
-                        دانیال یاشیخ اکبری
-                    </div>
-                    <div class="left post-btn" style="margin-top: -6px!important;">1</div>
-                </div>
-                <div class="item">
-                    <div class="right" style="width: 215px;color: rgb(29, 183, 209);cursor: pointer;">
-                        دانیال یاشیخ اکبری
-                    </div>
-                    <div class="left post-btn" style="margin-top: -6px!important;">1</div>
-                </div>
-
-
-            </div>
-            <div class="box flex">
-                <img src="/static/images/poster1.jpg" width="315" >
-
-
-            </div>
-            <div class="box flex">
-                <img src="/static/images/poster2.jpg" width="315">
-
-
-            </div>
-        </div>
-    </div>
+    {% for post in posts %}
+        {% include 'post_list_item.html' with post=post %}
+    {% endfor %}
 
 
 {% endblock %}

@@ -1,0 +1,36 @@
+{% load post_template_tags %}
+<div class="del-item radius mrg-center">
+    <div class="header">
+        <a class="right username" href="{% url 'user_page' post.creator.username %}">
+            {{ post.creator.name }}
+        </a>
+
+        <div class="left time">
+            {{ post.date }}
+        </div>
+    </div>
+    <div class="main-text mrg-center">
+        {% if post.text|length > 500 %}
+            {{ post.text|max_str:500 }}
+
+            <a href="{% url 'post_page' post.id %}">
+                {
+                ادامه
+                }
+            </a>
+
+        {% else %}
+            {{ post.text }}
+        {% endif %}
+    </div>
+    <div class="bottom-box mrg-center">
+        <input type="hidden" class="post-id" name="post-id" value="{{ post.id }}">
+
+        <a class="right comment-btn" href="{% url 'post_page' post.id %}">
+            {{ post.comments_count }}
+        </a>
+
+        <div class="right like-btn login-need{% if post|is_like:user %} active{% endif %}">{{ post.like_count }}</div>
+        <div class="left report-btn"></div>
+    </div>
+</div>

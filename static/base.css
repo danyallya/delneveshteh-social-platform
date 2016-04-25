@@ -10,6 +10,10 @@ body {
 
 }
 
+input, textarea, select {
+    font-family: 'sans', tahoma, sans-serif;;
+}
+
 .flex {
     display: flex;
 }
@@ -118,6 +122,10 @@ a:hover {
     height: 92px;
 }
 
+.logo:hover {
+    opacity: 0.95;
+}
+
 .search {
     width: 198px;
     height: 37px;
@@ -166,6 +174,7 @@ a:hover {
     font-family: entezar, "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     height: 55px;
     border-right: 1px solid white;
+    border-left: 1px solid white;
     margin-top: 17px;
     text-align: center;
     font-size: 23px;
@@ -173,13 +182,20 @@ a:hover {
     padding-top: 5px;
 }
 
-.items .item:hover {
-    background-color: white;
+.items .item:hover, .items .item.active {
+    background-color: #06B3E2;
 }
 
-.items .item:hover .item-text {
-    color: #00bff3;
+.items .item:hover .item-text, .items .item.active .item-text {
+    color: white;
+}
+
+.items .item:last-child .item-text {
     border-right: none;
+}
+
+.items .item:first-child .item-text {
+    border-left: none;
 }
 
 /*main*/
@@ -187,6 +203,17 @@ a:hover {
     margin-top: 125px;
     margin-bottom: 50px;
     min-height: 420px;
+}
+
+.del-header {
+    width: 850px;
+    background-color: white;
+    box-shadow: 0px 0px 8px -4px;
+    overflow: hidden;
+    margin-top: 20px;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 10px;
 }
 
 .del-item {
@@ -214,6 +241,10 @@ a:hover {
     padding-left: 5px;
     padding-right: 5px;
     margin-right: 20px;
+}
+
+.del-item .header .username:hover {
+    opacity: 0.8;
 }
 
 .del-item .header .time {
@@ -262,6 +293,7 @@ a:hover {
 }
 
 .like-btn {
+    font-family: entezar, "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     background-image: url("/static/images/bottom-box-img.png");
     width: 45px;
     height: 32px;
@@ -287,6 +319,7 @@ a:hover {
 }
 
 .comment-btn {
+    font-family: entezar, "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     background-image: url("/static/images/bottom-box-img.png");
     width: 45px;
     height: 32px;
@@ -650,7 +683,7 @@ footer {
     height: 19px;
     font-size: 13px;
     color: #7d7a7a;;
-
+    display: block;
 }
 
 .left-menu .box .header {
@@ -662,16 +695,17 @@ footer {
 }
 
 .post-btn {
+    font-family: entezar, "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
     background-image: url("/static/images/post.png");
-    width: 32px;
+    width: 45px;
+    direction: ltr;
     height: 30px;
     cursor: pointer;
     margin-right: 20px;
-    margin-top: -6px;
     padding-top: 3px;
     color: gray;
     background-repeat: no-repeat;
-    padding-left: 10px;
+    padding-left: 33px;
     font-size: 14px;
 }
 
@@ -691,14 +725,6 @@ footer {
     box-shadow: 1px 0px 5px -3px black;
 }
 
-.signin-btn:hover {
-
-    background-color: rgb(0, 191, 243);
-    color: rgb(234, 234, 234);
-    border: 1px solid rgb(234, 234, 234);
-
-}
-
 .signup-btn {
     width: 100px;
     height: 37px;
@@ -714,10 +740,10 @@ footer {
     box-shadow: 1px 0px 5px -3px black;
 }
 
-.signup-btn:hover {
+.signup-btn:hover, .signin-btn:hover {
 
     background-color: rgb(0, 191, 243);
-    color: rgb(234, 234, 234);
+    color: white;
     border: 1px solid rgb(234, 234, 234);
 
 }

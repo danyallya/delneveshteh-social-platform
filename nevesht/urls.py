@@ -19,19 +19,30 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
-    url(r'^admin/', include(admin.site.urls)),  # admin site
+    url(r'^adminoo/', include(admin.site.urls)),  # admin site
     url(r'^account/', include('account.urls')),
     url(r'^android/', include('android.urls')),
-
-    url(r'^base/$', 'post.views.base', name='base'),
-    url(r'^$', 'post.views.home', name='home'),
-    url(r'^post/(?P<post_id>\d+)/$', 'post.views.post_page', name='post_page'),
-    url(r'^like_ajax/$', 'post.views.like_ajax', name='like_ajax'),
-    url(r'^send_comment/$', 'post.views.send_comment', name='send_comment'),
 
 ]
 
 urlpatterns += [
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
+]
+
+urlpatterns += [
+    url(r'^$', 'post.views.home', name='home', kwargs={'p': 'hot'}),
+    url(r'^del/$', 'post.views.home', name='del', kwargs={'p': 'del'}),
+    url(r'^discuss/$', 'post.views.home', name='talk', kwargs={'p': 'talk'}),
+    url(r'^say/$', 'post.views.home', name='hadis', kwargs={'p': 'hadis'}),
+    url(r'^event/$', 'post.views.home', name='monasebat', kwargs={'p': 'monasebat'}),
+
+    url(r'^search/$', 'post.views.search_view', name='search'),
+
+    url(r'^post/(?P<post_id>\d+)/$', 'post.views.post_page', name='post_page'),
+    url(r'^like_ajax/$', 'post.views.like_ajax', name='like_ajax'),
+    url(r'^send_comment/$', 'post.views.send_comment', name='send_comment'),
+
+    url(r'^(?P<username>\w+)/$', 'post.views.user_page', name='user_page'),
+
 ]

@@ -1,12 +1,18 @@
 # -*- coding:utf-8 -*-
 from captcha.fields import CaptchaField, CaptchaTextInput
-
 from django import forms
-
 from account.models import Profile
+from nevesht import urls
 from utils.forms import BaseForm
 
 __author__ = 'M.Y'
+
+reserve_words = []
+
+for url in urls.urlpatterns:
+    url = url.regex.pattern
+    if '/' in url:
+        reserve_words.append(url[:url.index('/')])
 
 
 class SignUpFormNoCaptcha(BaseForm):
@@ -26,17 +32,24 @@ class SignUpFormNoCaptcha(BaseForm):
         cd = super(SignUpFormNoCaptcha, self).clean()
         email = cd.get('email')
         username = cd.get('username')
+
+        for item in reserve_words:
+            if username in item:
+                self.errors['username'] = self.error_class([u'این نام کاربری مجاز نمی باشد.'])
+
         try:
             Profile.objects.get(username=username)
             self.errors['username'] = self.error_class([u'نام کاربری تکراری می باشد.'])
         except Profile.DoesNotExist:
             pass
+
         if email:
             try:
                 Profile.objects.get(email=email)
                 self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])
             except Profile.DoesNotExist:
                 pass
+
         return cd
 
     def save(self, commit=True):
@@ -98,6 +111,10 @@ class ProfileForm(BaseForm):
             self.errors['password'] = self.error_class([u'رمز عبور با تکرار آن مطابقت ندارد.'])
 
         if email:
+            for item in reserve_words:
+                if username in item:
+                    self.errors['username'] = self.error_class([u'این نام کاربری مجاز نمی باشد.'])
+
             try:
                 Profile.objects.exclude(id=self.instance.user.id).get(email=email)
                 self.errors['email'] = self.error_class([u'پست الکترونیک تکراری می باشد.'])

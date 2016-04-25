@@ -1,7 +1,11 @@
 import json
+
+from django.db.models import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.encoding import smart_text
+
+from account.models import Profile
 from android.views import check_user
 from comment.models import Comment
 from comment.views import send_comment_handler_view
@@ -12,9 +16,27 @@ def base(request):
     return render(request, 'base.html', {})
 
 
-def home(request):
-    posts = Post.objects.filter(active=True).order_by('-id')
-    return render(request, 'home.html', {'posts': posts})
+def home(request, p='hot'):
+    posts_obj = Post.get_queryset_by_param(p).order_by('-id')
+    return render(request, 'home.html', {'posts': posts_obj, 'p': p})
+
+
+def user_page(request, username):
+    user = get_object_or_404(Profile, username=username)
+    posts_obj = Post.objects.filter(active=True).filter(creator__username=username).order_by('-id')
+    return render(request, 'home.html', {'posts': posts_obj})
+
+
+def search_view(request):
+    q = request.GET.get('q', '').strip()
+    if q:
+        posts_obj = Post.objects.filter(active=True). \
+            filter(Q(creator__username__icontains=q) | Q(text__icontains=q)).order_by('-id')
+    else:
+        posts_obj = Post.objects.none()
+
+    desc = 'جستجو برای: "%s"' % q
+    return render(request, 'home.html', {'posts': posts_obj, 'desc': desc, 'q': q})
 
 
 def post_page(request, post_id):

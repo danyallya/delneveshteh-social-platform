@@ -1,0 +1,57 @@
+{% load post_template_tags %}
+<div class="left-menu left">
+    <div class="box ">
+        <div class="header">
+            پست های تصادفی
+        </div>
+        {% for post in random_posts %}
+            <a class="item" href="{% url 'post_page' post.id %}">
+                {{ post.text|max_str:40 }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="box ">
+        <div class="header">
+            محبوب ترین پست های ماه
+        </div>
+        {% for post in hot_posts %}
+            <a class="item" href="{% url 'post_page' post.id %}">
+                <div class="right" style="width: 225px;">
+                    {{ post.text|max_str:30 }}
+                </div>
+                <div class="left like-btn login-need active" style="margin-top: -6px!important;">
+                    {{ post.like_count }}
+                </div>
+            </a>
+        {% endfor %}
+
+    </div>
+    <div class="box ">
+        <div class="header">
+            کاربران فعال
+        </div>
+
+        {% for active_user in active_users %}
+            <a class="item" href="{% url 'user_page' active_user.username %}">
+                <div class="right" style="width: 180px;color: rgb(29, 183, 209);cursor: pointer;">
+                    {{ active_user }}
+                </div>
+                <div class="left post-btn" style="margin-top: -6px!important;">
+                    {{ active_user.post_set.count }}
+                </div>
+            </a>
+        {% endfor %}
+
+    </div>
+    <div class="box flex">
+        <img src="/static/images/poster1.jpg" width="315">
+
+
+    </div>
+    <div class="box flex">
+        <img src="/static/images/poster2.jpg" width="315">
+
+
+    </div>
+</div>

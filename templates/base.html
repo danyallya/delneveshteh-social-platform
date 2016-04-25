@@ -44,52 +44,76 @@
 
         <a class="right logo" href="{% url 'home' %}"></a>
 
-        <div class="right signin-btn">
-            ورود
 
-        </div>
-        <div class="right signup-btn">
-ثبت نام
+        {% if user.is_authenticated %}
+            <span class="right">{{ user }}</span>
+            <a class="right signin-btn" href="{% url 'user_page' user.username %}">
+                صفحه من
+            </a>
+            <a class="right signup-btn" href="{% url 'logout' %}?next={{ request.path }}">
+                خروج
+            </a>
 
-        </div>
-        <div class="left search">
-            <input class="right" id="search-text" placeholder="جستجو"
-                   value="">
+        {% else %}
+            <div class="right signin-btn login">
+                ورود
+
+            </div>
+            <div class="right signup-btn signup">
+                ثبت نام
+
+            </div>
+        {% endif %}
+
+        <form class="left search" method="get" action="{% url 'search' %}">
+            <input class="right" id="search-text" placeholder="جستجو..." name="q"
+                   value="{{ q|default:'' }}">
 
             <div class="right search-btn">
                 <img src="/static/images/search-btn.png" width="28" height="26">
             </div>
-        </div>
+        </form>
+
         <div class="left items">
-            <div class="left item">
+            <a class="left item{% if p == 'monasebat' %} active{% endif %}" href="{% url 'monasebat' %}">
                 <div class="item-text">مناسبات</div>
-            </div>
-            <div class="left item">
+            </a>
+            <a class="left item{% if p == 'hadis' %} active{% endif %}" href="{% url 'hadis' %}">
                 <div class="item-text">حدیث</div>
 
-            </div>
-            <div class="left item">
+            </a>
+            <a class="left item{% if p == 'talk' %} active{% endif %}" href="{% url 'talk' %}">
                 <div class="item-text">بحث</div>
 
-            </div>
-            <div class="left item">
+            </a>
+            <a class="left item{% if p == 'del' %} active{% endif %}" href="{% url 'del' %}">
                 <div class="item-text">دلنوشته</div>
 
-            </div>
-            <div class="left item">
-                <div class="item-text no-border">داغ</div>
+            </a>
+            <a class="left item{% if p == 'hot' %} active{% endif %}" href="{% url 'home' %}">
+                <div class="item-text">داغ</div>
 
-            </div>
+            </a>
         </div>
 
     </div>
 </div>
 
-{% block content %}
+<div class="main-width table mrg-center main">
+
+
+    <div class="right-main right">
+
+        {% block content %}
 
 
 
-{% endblock %}
+        {% endblock %}
+    </div>
+
+    {% include 'left_menu.html' %}
+
+</div>
 
 <footer>
     <div class="copywrite mrg-center main-width">

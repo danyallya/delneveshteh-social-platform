@@ -1,7 +1,6 @@
 # from django.http.response import JsonResponse
 import json
 import re
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -9,6 +8,8 @@ from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import never_cache
+
+from account.forms import reserve_words
 from account.models import Profile
 from utils.forms import BaseForm
 from utils.messages import MessageServices
@@ -75,10 +76,14 @@ def check(request):
 def check_signup(request):
     username = arToPersianChar(request.POST.get('username'))
 
+    res = True
+
+    for item in reserve_words:
+        if username in item:
+            res = False
+
     if Profile.objects.filter(username=username):
         res = False
-    else:
-        res = True
     return HttpResponse(json.dumps(res), 'application/json')
 
 

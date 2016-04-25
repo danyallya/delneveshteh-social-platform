@@ -14,6 +14,27 @@ $(document).ready(function () {
         });
     });
 
+
+    $(".account-section, .close-pop-up").click(function () {
+        $('.account-section').fadeOut();
+    });
+    $('.pop-box').click(function (e) {
+        e.stopPropagation();
+    });
+
+    $('.search-btn').click(function () {
+        if ($('#search-text').val().trim())
+            $('form.search').submit();
+    });
+
+    $(document).on('keyup', '#search-text', function (event) {
+        if (event.keyCode == 13) {
+            if ($('#search-text').val().trim() != '')
+                $('form.search').submit();
+        }
+    });
+
+
     // AUTH CHECK
     $(document).on('click', '.login-need', function (e) {
         if (!is_auth) {
